@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Pump</string>
+    <string name="title_activity_slave_controller">SlaveController</string>
+
+    <string-array name="sensor_array">
+
+        <item>Pressure Sensor</item>
+        <item>Rain Meter</item>
+        <item>moisture</item>
+
+    </string-array>
+
+</resources>

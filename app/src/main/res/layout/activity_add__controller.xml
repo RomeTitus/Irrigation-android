@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/layout_gradient"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".Add_Controller">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutServerInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation='horizontal'>
+                    android:checkedButton="@id/RadioButtonInternal">
+
+                    <RadioButton
+                        android:id="@+id/RadioButtonInternal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Internal Address"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <RadioButton
+                        android:id="@+id/RadioButtonExternal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="External Address"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="30dp"
+                android:text="Lest Add A Controller"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="36sp" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pump Controller Internal Path"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="24sp"
+                tools:text="Pump Controller Internal Path" />
+
+            <EditText
+                android:id="@+id/TxtPumpPath"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="xxx.xxx.xxx.xxx"
+                android:inputType="textPersonName"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pump Controller Internal Port"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/TxtPumpPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="xxxx"
+                android:inputType="phone"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                android:textSize="24sp"
+
+                />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="0"
+                android:background="@android:color/darker_gray" />
+
+            <Button
+                android:id="@+id/BtnAddServer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Server" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/ImageButtonArrow"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutSlavesPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="vertical"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SLAVES"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@drawable/layout_curve">
+
+                <LinearLayout
+                    android:id="@+id/LinearLayoutSlaves"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/BtnAddSlave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Slave" />
+
+            <Button
+                android:id="@+id/BtnBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Back" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
