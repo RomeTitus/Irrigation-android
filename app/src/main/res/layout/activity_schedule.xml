@@ -22,7 +22,8 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible"
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/textView4"
@@ -45,7 +46,8 @@
         android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:background="@drawable/layout_curve"
-        android:visibility="gone">
+        android:visibility="visible"
+        tools:visibility="visible">
 
         <LinearLayout
             android:id="@+id/LinearLayoutSchedule"
@@ -63,10 +65,11 @@
         android:layout_marginBottom="0dp"
 
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible"
+        tools:visibility="visible">
 
         <Button
-            android:id="@+id/BtnSchedule"
+            android:id="@+id/BtnAlarmSchedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Schedule"
@@ -89,7 +92,8 @@
         android:layout_marginBottom="0dp"
         android:gravity="fill"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone"
+        tools:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -238,7 +242,6 @@
             android:orientation="horizontal">
 
             <ScrollView
-                android:id="@+id/ScrollViewValve"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
@@ -246,7 +249,7 @@
                 android:background="@drawable/layout_curve">
 
                 <LinearLayout
-                    android:id="@+id/LinearLayoutBtnValve"
+                    android:id="@+id/ScrollViewZone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"

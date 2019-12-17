@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -11,9 +12,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:text="View schedule" />
+        android:text="View / Edit schedule" />
 
     <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="0"
+        android:background="@android:color/darker_gray" />
+
+    <Button
+        android:id="@+id/btnAlarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="View / Edit Alarm"
+        tools:text="View / Edit Alarm" />
+
+    <View
+        android:id="@+id/view6"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_margin="10dp"
@@ -30,7 +53,7 @@
         android:id="@+id/BtnAddPumpValve"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Equipment" />
+        android:text="View / Edit Equipment" />
 
     <View
         android:id="@+id/view4"
@@ -52,4 +75,5 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:text="ConnecT" />
+
 </LinearLayout>
