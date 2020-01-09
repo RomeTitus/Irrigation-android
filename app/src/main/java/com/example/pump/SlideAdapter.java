@@ -225,7 +225,6 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                         Old = getCurrentSchedule(Old);
 
-
                         SystemClock.sleep(8000);
                     }
                 }
@@ -507,6 +506,8 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     if((arraySize+1) < zoneIDs.size()){
                         arraySize++;
+                        int btnValve2ID = Integer.parseInt(zoneIDs.get(arraySize));
+                        btnValve2ID = btnValve2ID;
                         btnValve2 = view.findViewById(Integer.parseInt(zoneIDs.get(arraySize)));
 
                         match = false;
@@ -747,6 +748,8 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
     }
 
     private String[][] getSensorLiveView(String[][] OldSensorDetails) {
+
+
         final LayoutInflater layoutSensorStatus = LayoutInflater.from(context);//Used to inflate the schedules to the user
         //String[][] OldSensorDetails = new String[0][0];
 
@@ -779,134 +782,152 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         Boolean sameSensorEquals = false;
 
-        for (int i = 0; i < ActiveSensorDetails.length; i++) {
+        if (ActiveSensorDetails[0][0].equals("No Sensor")) {
+            TextView txtNoActivity;
+            final View v = layoutSensorStatus.inflate(R.layout.activity_no_live_equipment, linearLayoutQueueZone, false);
+            txtNoActivity = v.findViewById(R.id.TxtNoActivity);
+            txtNoActivity.setText("No Sensors");
 
-            if (ActiveSensorDetails[i][1].equals("Pressure Sensor")) {
+            if (sameSensorEquals == false) {
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+                        linearLayoutQueueZone.addView(v);
+                    }
+                });
+            }
 
-                TextView txtSensorName, txtPressureStatus;
-                ImageView imageSesnorStatus;
-                final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
-                txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                txtSensorName = v.findViewById(R.id.TxtSensorName);
-                imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+        }else {
 
-                txtSensorName.setText(ActiveSensorDetails[i][1]);
 
-                if (ActiveSensorDetails[i][1].equals("0")) {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
-                    txtPressureStatus.setText("Pressure: LOW");
-                } else {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.pressure_high);
-                    txtPressureStatus.setText("Pressure: HIGH");
+            for (int i = 0; i < ActiveSensorDetails.length; i++) {
+
+                if (ActiveSensorDetails[i][1].equals("Pressure Sensor")) {
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][1]);
+
+                    if (ActiveSensorDetails[i][1].equals("0")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
+                        txtPressureStatus.setText("Pressure: LOW");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_high);
+                        txtPressureStatus.setText("Pressure: HIGH");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Echo Sensor")) {
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                    imageSesnorStatus.setBackgroundResource(R.drawable.echo_sensor_img);
+                    txtPressureStatus.setText(ActiveSensorDetails[i][3] + " CM");
+
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Mini Infrared PIR")) {
+
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                    if (ActiveSensorDetails[i][3].equals("0")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pir_low_img);
+                        txtPressureStatus.setText("Nothing detected");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pir_high_img);
+                        txtPressureStatus.setText("PIR has been set off");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Vibration Sensor")) {
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                    if (ActiveSensorDetails[i][3].equals("1")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.vibration_low_img);
+                        txtPressureStatus.setText("No Vibrations");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.vibration_high_img);
+                        txtPressureStatus.setText("Vibrations Detected!");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Sound Detection Sensor")) {
+
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][1]);
+
+                    if (ActiveSensorDetails[i][3].equals("0")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.mic_low_img);
+                        txtPressureStatus.setText("No Sound");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.mic_high_img);
+                        txtPressureStatus.setText("Sound Detected!");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
                 }
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutQueueZone.addView(v);
-                    }
-                });
-
-        } else if (ActiveSensorDetails[i][1].equals("Echo Sensor")) {
-
-                TextView txtSensorName, txtPressureStatus;
-                ImageView imageSesnorStatus;
-                final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
-                txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                txtSensorName = v.findViewById(R.id.TxtSensorName);
-                imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                txtSensorName.setText(ActiveSensorDetails[i][2]);
-
-                imageSesnorStatus.setBackgroundResource(R.drawable.echo_sensor_img);
-                txtPressureStatus.setText(ActiveSensorDetails[i][3] + " CM");
-
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutQueueZone.addView(v);
-                    }
-                });
-
-        } else if (ActiveSensorDetails[i][1].equals("Mini Infrared PIR")) {
-
-
-                TextView txtSensorName, txtPressureStatus;
-                ImageView imageSesnorStatus;
-                final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
-                txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                txtSensorName = v.findViewById(R.id.TxtSensorName);
-                imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                txtSensorName.setText(ActiveSensorDetails[i][2]);
-
-                if (ActiveSensorDetails[i][3].equals("0")) {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.pir_low_img);
-                    txtPressureStatus.setText("Nothing detected");
-                } else {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.pir_high_img);
-                    txtPressureStatus.setText("PIR has been set off");
-                }
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutQueueZone.addView(v);
-                    }
-                });
-
-            } else if (ActiveSensorDetails[i][1].equals("Vibration Sensor")) {
-
-                TextView txtSensorName, txtPressureStatus;
-                ImageView imageSesnorStatus;
-                final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
-                txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                txtSensorName = v.findViewById(R.id.TxtSensorName);
-                imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                txtSensorName.setText(ActiveSensorDetails[i][2]);
-
-                if (ActiveSensorDetails[i][3].equals("1")) {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.vibration_low_img);
-                    txtPressureStatus.setText("No Vibrations");
-                } else {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.vibration_high_img);
-                    txtPressureStatus.setText("Vibrations Detected!");
-                }
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutQueueZone.addView(v);
-                    }
-                });
-
-        } else if (ActiveSensorDetails[i][1].equals("Sound Detection Sensor")) {
-
-
-                TextView txtSensorName, txtPressureStatus;
-                ImageView imageSesnorStatus;
-                final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
-                txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                txtSensorName = v.findViewById(R.id.TxtSensorName);
-                imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                txtSensorName.setText(ActiveSensorDetails[i][1]);
-
-                if (ActiveSensorDetails[i][3].equals("0")) {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.mic_low_img);
-                    txtPressureStatus.setText("No Sound");
-                } else {
-                    imageSesnorStatus.setBackgroundResource(R.drawable.mic_high_img);
-                    txtPressureStatus.setText("Sound Detected!");
-                }
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutQueueZone.addView(v);
-                    }
-                });
-
+            }
         }
-    }
-
         /*
         for (int i = 0; i < ActiveSensorDetails.length; i++) {
 
@@ -991,6 +1012,8 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
          */
         return ActiveSensorDetails;
+
+
     }
 
     private void getNextScheudleDue(){
@@ -1149,7 +1172,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     btnPump.setText(buttonInfo[1]);
                     btnPump.setOnClickListener(SlideAdapter.this);
-                    v.setId(i);
+                    v.setId(i*(-1));
                     if ((i + 1) < differentButtons.length) {
                         i++;
                         String[] buttonInfo2 = differentButtons[i].split(","); //stores the information for the second Zone
@@ -1255,7 +1278,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     String[] buttonInfo = differentButtons[i].split(",");
 
-                    final View v = layoutInflaterScrollManualZone.inflate(R.layout.all_valves, linearLayoutScrollManualZone, false);
+                    View v = layoutInflaterScrollManualZone.inflate(R.layout.all_valves, linearLayoutScrollManualZone, false);
 
                     btnValve = v.findViewById(R.id.BtnValve);
                     btnValve2 = v.findViewById(R.id.BtnValve2);
@@ -1266,7 +1289,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     btnValve3.setBackgroundResource(android.R.drawable.btn_default);
                     btnValve2.setVisibility(View.GONE);
                     btnValve3.setVisibility(View.GONE);
-                    v.setId(i);
+                    v.setId(i*(-1));
                     //j++;
                     btnValve.setId(Integer.parseInt(buttonInfo[0]));
 
@@ -1313,13 +1336,11 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     }
 
                     //final boolean finalManualSchedule1 = manualSchedule;
-                    final Button finalBtnValve = btnValve;
-                    final Button finalBtnValve2 = btnValve2;
-                    final Button finalBtnValve3 = btnValve3;
+                    final View finalView = v;
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            linearLayoutScrollManualZone.addView(v);
+                            linearLayoutScrollManualZone.addView(finalView);
                         }
                     });
                     //j++;                                                        //_____________________________________________________________Valves

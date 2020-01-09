@@ -137,7 +137,12 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                 return "Server Not Running";
             } else {
 
-                if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                /*if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                    noConnection = true;
+                    return "Server Not Running";
+                }
+*/
+                if (response.contains("SSH-2.0-OpenSSH") || response.contains("RFB 003.008")) {
                     noConnection = true;
                     return "Server Not Running";
                 }
@@ -185,7 +190,13 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                     return "Server Not Running";
                 } else {
 
-                    if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                    /*if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                        noConnection = true;
+                        return "Server Not Running";
+                    }
+                    */
+
+                    if (response.contains("SSH-2.0-OpenSSH") || response.contains("RFB 003.008")) {
                         noConnection = true;
                         return "Server Not Running";
                     }
