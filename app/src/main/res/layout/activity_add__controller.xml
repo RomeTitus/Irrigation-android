@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="30dp"
-                android:text="Lest Add A Controller"
+                android:text="Lets Add A Controller"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#FFFFFF"
                 android:textSize="36sp" />
