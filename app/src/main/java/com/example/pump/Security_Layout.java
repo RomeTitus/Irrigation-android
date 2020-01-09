@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Security_Layout extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
 
-//Ive changed something
+
     public static Handler UIHandler = new Handler();
 
     public static void runOnUI(Runnable runnable) { //Runs code to invoke the main thread
