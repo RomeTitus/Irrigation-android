@@ -585,10 +585,10 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                         Saturday = view.findViewById(R.id.TxtSaturday);
                         PumpName = view.findViewById(R.id.TxtPumpNameInfo);
                         View horizontalLine = view.findViewById(R.id.view9);
-                        name.setId(Integer.parseInt(buttonInfo[0]));
+                        view.setId(Integer.parseInt(buttonInfo[0]));
                         switchSchedule.setId(Integer.parseInt(buttonInfo[0]));
                         name.setText((buttonInfo[1]) + " :" + buttonInfo[2]);
-                        name.setOnLongClickListener(Schedule.this); //Used to view the details
+                        view.setOnLongClickListener(Schedule.this); //Used to view the details
 
                         try {
                             PumpName.setText((buttonInfo[4]));
