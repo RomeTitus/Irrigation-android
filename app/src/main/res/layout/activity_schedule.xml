@@ -22,7 +22,8 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="gone">
 
         <TextView
             android:id="@+id/textView4"
@@ -45,7 +46,8 @@
         android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:background="@drawable/layout_curve"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="gone">
 
         <LinearLayout
             android:id="@+id/LinearLayoutSchedule"
@@ -63,10 +65,11 @@
         android:layout_marginBottom="0dp"
 
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="gone">
 
         <Button
-            android:id="@+id/BtnSchedule"
+            android:id="@+id/BtnAlarmSchedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Schedule"
@@ -89,7 +92,8 @@
         android:layout_marginBottom="0dp"
         android:gravity="fill"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="visible"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -240,7 +244,6 @@
             android:orientation="horizontal">
 
             <ScrollView
-                android:id="@+id/ScrollViewValve"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
@@ -248,7 +251,7 @@
                 android:background="@drawable/layout_curve">
 
                 <LinearLayout
-                    android:id="@+id/LinearLayoutBtnValve"
+                    android:id="@+id/ScrollViewZone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -280,7 +283,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView5"
+                        android:id="@+id/TxtSunday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -305,7 +308,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView6"
+                        android:id="@+id/TxtMonday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -329,7 +332,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView7"
+                        android:id="@+id/TxtTuesday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -353,7 +356,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView8"
+                        android:id="@+id/TxtWednesday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -377,7 +380,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView9"
+                        android:id="@+id/TxtThursday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -401,7 +404,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView10"
+                        android:id="@+id/TxtFriday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -425,7 +428,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/TextView11"
+                        android:id="@+id/TxtSaturday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

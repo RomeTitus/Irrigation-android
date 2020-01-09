@@ -12,6 +12,8 @@
         android:id="@+id/LinearLayoutAddPump"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="top"
         android:orientation="vertical"
         android:visibility="gone"
         tools:visibility="visible">
@@ -20,6 +22,7 @@
             android:id="@+id/textView20"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:text="Select What Your Adding"
             android:textColor="#FFFFFF"
             android:textSize="24sp" />
@@ -27,6 +30,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -69,14 +73,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.28"
+            android:gravity="top"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/TxtEquipmentName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:text="Name"
                 android:textColor="#FFFFFF" />
 
@@ -84,6 +90,7 @@
                 android:id="@+id/EditTextName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:textColor="#FFFFFF"
@@ -99,10 +106,10 @@
             <ScrollView
                 android:id="@+id/ScrollViewAddSensorValve"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:background="@drawable/layout_curve">
 
                 <LinearLayout
@@ -115,8 +122,8 @@
             <LinearLayout
                 android:id="@+id/LinearLayoutSensorType"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -167,7 +174,7 @@
                 android:id="@+id/txtGPIODirectOnline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:text="DirectOnline Power Off"
                 android:textColor="#FFFFFF" />
 
@@ -175,7 +182,7 @@
                 android:id="@+id/EditTextGPIOVXD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:ems="10"
                 android:inputType="number"
                 android:textColor="#FFFFFF"
@@ -184,25 +191,26 @@
             <LinearLayout
                 android:id="@+id/LinearLayoutPumpZone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_weight="14"
+                android:gravity="center"
                 android:orientation="vertical"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/textView27"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
                     android:text="Pump"
                     android:textColor="#FFFFFF" />
 
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_weight="1"
+                    android:layout_weight="15"
                     android:background="@drawable/layout_curve">
 
                     <LinearLayout
@@ -216,16 +224,16 @@
                     android:id="@+id/textView28"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
                     android:text="Zone"
                     android:textColor="#FFFFFF" />
 
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_weight="1"
+                    android:layout_weight="25"
                     android:background="@drawable/layout_curve">
 
                     <LinearLayout
@@ -241,6 +249,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:fillViewport="true"
             android:gravity="bottom"
             android:orientation="vertical">

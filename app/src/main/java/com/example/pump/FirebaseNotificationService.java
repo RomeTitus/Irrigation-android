@@ -2,9 +2,13 @@ package com.example.pump;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -13,6 +17,10 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 import java.util.Map;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -43,6 +51,9 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
             Map<String, String> remoteData  = remoteMessage.getData();
             if(remoteData.get("Ngrok") !=null){
                 updateNgrokNotifications(remoteData.get("Ngrok"));
+            }else if(remoteData.get("Alarm") !=null){
+                AlarmNotify(remoteData.get("Alarm"));
+                //updateNgrokNotifications(remoteData.get("Ngrok"));
             }
 
 
@@ -79,17 +90,10 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         UpdateConnectionAndOpen.putExtra("Ngrok", externalConnection);
         PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, UpdateConnectionAndOpen, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    //Intent activityIntent = new Intent(context, Add_Controller.class);
-     //   PendingIntent contentIntent = PendingIntent.getActivity(context,
-      //          0, activityIntent, 0);
-
         Intent broadcastIntent = new Intent(this, NotificationActions.class);
         broadcastIntent.putExtra("notificationId", "1");
         broadcastIntent.putExtra("Ngrok", externalConnection);
         PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //PendingIntent actionIntent = PendingIntent.getBroadcast(context,
-         //       0, saveConnection, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_cloud)
@@ -105,22 +109,58 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                 .build();
 
             notificationManager.notify(1, notification);
-
-    /*
-
-
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_cloud)
-                .setContentTitle("Im a Title")
-                .setContentText("Bla, bla, bla")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .build();
-
-        notificationManager.notify(1, notification);
-*/
-
     }
 
+    public void AlarmNotify(String externalConnection){
+        JSONObject alarmDetail = null;
+        String NotificationMessage = "";
+        long[] pattern = {500,500,500,500,500,500,500,500,500};
+
+        Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/alarm");
+        //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALL);
+        try{
+            alarmDetail = new JSONObject(externalConnection);
+        }catch (Exception e){
+
+        }
+
+        Iterator<String> iter = alarmDetail.keys(); //This should be the iterator you want.
+        while(iter.hasNext()){
+            String key = iter.next();
+            key = key;
+            try{
+                JSONObject alarm = alarmDetail.getJSONObject(key);
+
+                NotificationMessage = NotificationMessage + alarm.getString("Name") + ": Went off at: " + alarm.getString("Time") + "   ";
+
+            }catch (Exception e){
+                Log.d(TAG, "Message data payload error: " + e.toString());
+
+            }
+
+        }
+        notificationManager = NotificationManagerCompat.from(context);
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_notifications_active_24dp)
+                .setContentTitle("Alarm")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setColor(Color.BLUE)
+                //.setContentIntent(contentIntent)
+                .setVibrate(pattern)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setSound(alarmSound)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(NotificationMessage))
+                //.addAction(R.drawable.ic_cloud, "Update Connection", actionIntent)
+                .build();
+
+
+        Ringtone r = RingtoneManager.getRingtone(context, alarmSound);
+        r.play();
+        notification.sound = (RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        notificationManager.notify(2, notification);
+    }
 
 }

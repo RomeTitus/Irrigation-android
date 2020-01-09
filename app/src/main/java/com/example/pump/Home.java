@@ -3,6 +3,8 @@ package com.example.pump;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -15,6 +17,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.concurrent.ExecutionException;
+
 public class Home extends AppCompatActivity {
 
     private ViewPager Pager;
@@ -23,6 +27,12 @@ public class Home extends AppCompatActivity {
     private TextView txtViewPing;
     private ImageView imageViewSignal;
     private BottomNavigationView bottomNavigationView;
+    private static Handler UIHandler = new Handler();
+
+    public static void runOnUI(Runnable runnable) { //Runs code to invoke the main thread
+        UIHandler.post(runnable);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -51,9 +61,12 @@ public class Home extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.scheduleNav);
 
 
+
+
         myadapter.setCustomObjectListener(new SlideAdapter.MyCustomObjectListener() {
             @Override
             public void onObjectReady(String title) {
+                /*
                 int time = Integer.parseInt(title);
                 if (time == 0) {
                     imageViewSignal.setBackgroundResource(R.drawable.ic_action_no_signal);
@@ -76,7 +89,7 @@ public class Home extends AppCompatActivity {
 
                 }
 
-
+                */
             }
         });
 
@@ -124,6 +137,75 @@ public class Home extends AppCompatActivity {
                     }
                 });
 
+        ConnectionStatus();
+    }
+
+
+    private void ConnectionStatus(){
+
+
+
+
+
+
+
+
+            new Thread(new Runnable() { //Running on a new thread
+                public void run() { //used to ge the pumps that are in today's schedule
+                    while (true) {
+                        String PingTime;
+                        try {
+                            SocketController socketControllerManual = new SocketController(Home.this, "ping");
+                            socketControllerManual.execute().get();
+                            PingTime = socketControllerManual.getPingTime();
+                        } catch (ExecutionException e) {
+                            PingTime = "0";
+                        } catch (InterruptedException i) {
+                            PingTime = "0";
+                        }
+
+
+                        final String finalPingTime = PingTime;
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+
+
+                                int time = Integer.parseInt(finalPingTime);
+                                if (time == 0) {
+                                    imageViewSignal.setBackgroundResource(R.drawable.ic_action_no_signal);
+                                    txtViewPing.setText("No Connection!!!");
+                                } else if (time < 250) {
+                                    imageViewSignal.setBackgroundResource(R.drawable.ic_action_4_bar);
+                                    txtViewPing.setText(time + "ms");
+
+                                } else if (time < 500) {
+                                    imageViewSignal.setBackgroundResource(R.drawable.ic_action_3_bar);
+                                    txtViewPing.setText(time + "ms");
+
+                                } else if (time < 1000) {
+                                    imageViewSignal.setBackgroundResource(R.drawable.ic_action_2_bar);
+                                    txtViewPing.setText(time + "ms");
+
+                                } else {
+                                    imageViewSignal.setBackgroundResource(R.drawable.ic_action_1_bar);
+                                    txtViewPing.setText(time + "ms");
+
+                                }
+
+                            }
+                        });
+
+                        SystemClock.sleep(1000);
+                    }
+                }
+
+
+
+
+            }).start();
+
 
     }
+
 }

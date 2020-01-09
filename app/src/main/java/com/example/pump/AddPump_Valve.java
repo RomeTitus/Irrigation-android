@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -103,7 +104,7 @@ String getPumpsForInfo, getZonesForInfo;
 
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item,list);
         spinnerSensor.setAdapter(adapter);
-    spinnerSensor.setOnItemSelectedListener(AddPump_Valve.this);
+        spinnerSensor.setOnItemSelectedListener(AddPump_Valve.this);
 
 
         btnAddEquipment.setOnClickListener(new View.OnClickListener() {
@@ -125,129 +126,133 @@ String getPumpsForInfo, getZonesForInfo;
         btnAddEquipmentToDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editTextName.getText().toString().equals("")|| editTextGPIO.getText().toString().equals("")){
-                    if(editTextName.getText().toString().equals("")){
+            if(editTextName.getText().toString().equals("")|| editTextGPIO.getText().toString().equals("")){
+                if(editTextName.getText().toString().equals("")){
 
-                        txtEquipmentName.setTextColor(Color.parseColor("#FF0000"));
+                    txtEquipmentName.setTextColor(Color.parseColor("#FF0000"));
 
-                    }else{
+                }else{
 
-                        txtEquipmentName.setTextColor(Color.parseColor("#808080"));
-                    }
+                    txtEquipmentName.setTextColor(Color.parseColor("#808080"));
+                }
 
 
-                    if(editTextGPIO.getText().toString().equals("")){
-                        txtGPIO.setTextColor(Color.parseColor("#FF0000"));
-                    }
-                    else{
+                if(editTextGPIO.getText().toString().equals("")){
+                    txtGPIO.setTextColor(Color.parseColor("#FF0000"));
+                }
+                else{
 
-                        txtGPIO.setTextColor(Color.parseColor("#808080"));
-                    }
-                }else{//____________________________________________________________________________retrived the information to be added
-                    if (editEquipment == true) {
-                        if (radioPump.isChecked() == true || radioValve.isChecked() == true){       //Update Equipment table
-                            SocketData = EquipmentID + ",";
-                            SocketData = SocketData + editTextName.getText().toString();
-                            SocketData = SocketData + "," +getSelectedController();
-                            SocketData = SocketData + "," + editTextGPIO.getText().toString();
+                    txtGPIO.setTextColor(Color.parseColor("#808080"));
+                }
+            }else{//____________________________________________________________________________retried the information to be added
+                if (editEquipment == true) {
+                    if (radioPump.isChecked() == true || radioValve.isChecked() == true){       //Update Equipment table
+                        SocketData = EquipmentID + ",";
+                        SocketData = SocketData + editTextName.getText().toString();
+                        SocketData = SocketData + "," +getSelectedController();
+                        SocketData = SocketData + "," + editTextGPIO.getText().toString();
 
-                            if (radioValve.isChecked()) {
-                                SocketData = SocketData + ",0";
-                            }else{
-                                SocketData = SocketData + ",1";
-                            }
-                            if (checkBoxDirectOnline.isChecked() == true) {
-                                SocketData = SocketData + "," + editTextGPIODirectDrive.getText().toString();
-                            }
-                            //SocketData = SocketData + "," + editTextGPIODirectDrive.getText().toString();
-                            SocketData = SocketData + "$" + "updateEquipment";
-                            SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
-                            socketController.execute();
-                            finish();
-                            Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
-                            AddPump_Valve.this.startActivity(schedule);
-                        }else{                                                                      //Update Sensor Table
-                            SocketData = EquipmentID + ",";
-                            SocketData = SocketData + editTextName.getText().toString();
-                            SocketData = SocketData + "," +getSelectedController();
-                            SocketData = SocketData + "," + editTextGPIO.getText().toString();
-                            SocketData = SocketData + "," + spinnerSensor.getSelectedItem().toString();
-
-                            for (int i = 0; i < selectedEquipment.size(); i++) {
-                                SocketData = SocketData + "," + selectedEquipment.get(i);
-                            }
-                            SocketData = SocketData + "$" + "EDIT_SENSOR";
-                            SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
-                            socketController.execute();
-                            finish();
-                            Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
-                            AddPump_Valve.this.startActivity(schedule);
+                        if (radioValve.isChecked()) {
+                            SocketData = SocketData + ",0";
+                        }else{
+                            SocketData = SocketData + ",1";
                         }
+                        if (checkBoxDirectOnline.isChecked() == true) {
+                            SocketData = SocketData + "," + editTextGPIODirectDrive.getText().toString();
+                        }
+                        //SocketData = SocketData + "," + editTextGPIODirectDrive.getText().toString();
+                        SocketData = SocketData + "$" + "updateEquipment";
+                        SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
+                        socketController.execute();
+                        finish();
+                        Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
+                        AddPump_Valve.this.startActivity(schedule);
+                    }else{                                                                      //Update Sensor Table
+                        SocketData = EquipmentID + ",";
+                        SocketData = SocketData + editTextName.getText().toString();
+                        SocketData = SocketData + "," +getSelectedController();
+                        SocketData = SocketData + "," + editTextGPIO.getText().toString();
+                        SocketData = SocketData + "," + spinnerSensor.getSelectedItem().toString();
+                        if(spinnerSensor.getSelectedItem().equals("Echo Sensor")){
+                            SocketData = SocketData + "," + editTextGPIODirectDrive.getText();
+                        }
+                        for (int i = 0; i < selectedEquipment.size(); i++) {
+                            SocketData = SocketData + "," + selectedEquipment.get(i);
+                        }
+                        SocketData = SocketData + "$" + "EDIT_SENSOR";
+                        SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
+                        socketController.execute();
+                        finish();
+                        Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
+                        AddPump_Valve.this.startActivity(schedule);
+                    }
 
-                    } else { //_______________________________________________________________________________ADD_PUMP_DirectOnline
+                } else { //_______________________________________________________________________________ADD_PUMP_DirectOnline
 
-                        if (radioPump.isChecked() == true) {
+                    if (radioPump.isChecked() == true) {
 
-                            if (checkBoxDirectOnline.isChecked()) {
-                                SocketData = "";
-                                SocketData = editTextName.getText().toString();
-                                SocketData = SocketData + "," + getSelectedController();
-
-                                SocketData = SocketData + "," + editTextGPIO.getText().toString();
-                                SocketData = SocketData + "," + editTextGPIODirectDrive.getText().toString();
-                                SocketData = SocketData + "$" + "ADD_PUMP_DirectOnline";
-                                SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
-                                socketController.execute();
-                                finish();
-                                Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
-                                AddPump_Valve.this.startActivity(schedule);
-                            } else {
-
+                        if (checkBoxDirectOnline.isChecked()) {
                             SocketData = "";
                             SocketData = editTextName.getText().toString();
                             SocketData = SocketData + "," + getSelectedController();
 
                             SocketData = SocketData + "," + editTextGPIO.getText().toString();
-                            SocketData = SocketData + "$" + "ADD_PUMP";
-
-                            SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
-                            socketController.execute();
-                            finish();
-                                Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
-                                AddPump_Valve.this.startActivity(schedule);
-                        }
-                        } else if(radioValve.isChecked() == true) {
-                            SocketData = "";
-                            SocketData = editTextName.getText().toString();
-                            SocketData = SocketData + "," +getSelectedController();
-                            SocketData = SocketData + "," + editTextGPIO.getText().toString();
-                            SocketData = SocketData + "$" + "ADD_VALVE";
-
+                            SocketData = SocketData + "," + editTextGPIODirectDrive.getText().toString();
+                            SocketData = SocketData + "$" + "ADD_PUMP_DirectOnline";
                             SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
                             socketController.execute();
                             finish();
                             Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
                             AddPump_Valve.this.startActivity(schedule);
-                        }else if(radioSensor.isChecked() == true){
-                            SocketData = "";
-                            SocketData = editTextName.getText().toString();
-                            SocketData = SocketData + "," +getSelectedController();
-                            SocketData = SocketData + "," + editTextGPIO.getText().toString();
-                            SocketData = SocketData + "," + spinnerSensor.getSelectedItem().toString();
+                        } else {
 
-                            for (int i = 0; i < selectedEquipment.size(); i++) {
-                                SocketData = SocketData + "," + selectedEquipment.get(i);
-                            }
-                            SocketData = SocketData + "$" + "ADD_SENSOR";
-                            SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
-                            socketController.execute();
-                            finish();
+                        SocketData = "";
+                        SocketData = editTextName.getText().toString();
+                        SocketData = SocketData + "," + getSelectedController();
+
+                        SocketData = SocketData + "," + editTextGPIO.getText().toString();
+                        SocketData = SocketData + "$" + "ADD_PUMP";
+
+                        SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
+                        socketController.execute();
+                        finish();
                             Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
                             AddPump_Valve.this.startActivity(schedule);
+                    }
+                    } else if(radioValve.isChecked() == true) {
+                        SocketData = "";
+                        SocketData = editTextName.getText().toString();
+                        SocketData = SocketData + "," +getSelectedController();
+                        SocketData = SocketData + "," + editTextGPIO.getText().toString();
+                        SocketData = SocketData + "$" + "ADD_VALVE";
 
+                        SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
+                        socketController.execute();
+                        finish();
+                        Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
+                        AddPump_Valve.this.startActivity(schedule);
+                    }else if(radioSensor.isChecked() == true){
+                        SocketData = "";
+                        SocketData = editTextName.getText().toString();
+                        SocketData = SocketData + "," +getSelectedController();
+                        SocketData = SocketData + "," + editTextGPIO.getText().toString();
+                        SocketData = SocketData + "," + spinnerSensor.getSelectedItem().toString();
+                        if(spinnerSensor.getSelectedItem().equals("Echo Sensor")){
+                            SocketData = SocketData + "," + editTextGPIODirectDrive.getText();
                         }
+                        for (int i = 0; i < selectedEquipment.size(); i++) {
+                            SocketData = SocketData + "," + selectedEquipment.get(i);
+                        }
+                        SocketData = SocketData + "$" + "ADD_SENSOR";
+                        SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
+                        socketController.execute();
+                        finish();
+                        Intent schedule = new Intent(AddPump_Valve.this,AddPump_Valve.class);
+                        AddPump_Valve.this.startActivity(schedule);
+
                     }
                 }
+            }
             }
         });
 
@@ -269,6 +274,26 @@ String getPumpsForInfo, getZonesForInfo;
                     editTextGPIODirectDrive.setVisibility(View.GONE);
                     txtGPIODirectOnline.setVisibility(View.GONE);
                 }
+            }
+        });
+
+
+        spinnerSensor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if(spinnerSensor.getSelectedItem().equals("Echo Sensor")){
+                txtGPIODirectOnline.setText("Select the Trigger Pin");
+                txtGPIODirectOnline.setVisibility(View.VISIBLE);
+                editTextGPIODirectDrive.setVisibility(View.VISIBLE);
+            }else{
+                editTextGPIODirectDrive.setVisibility(View.GONE);
+                txtGPIODirectOnline.setVisibility(View.GONE);
+            }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -540,6 +565,20 @@ String getPumpsForInfo, getZonesForInfo;
             public void run() {
                 String[] differentEquipment;
                 //Gets the different pumps
+                LayoutInflater layoutInflaterPump = LayoutInflater.from(AddPump_Valve.this);//Pump
+                Button dialogLoadCancel;
+                final View loadingScreen = layoutInflaterPump.inflate(R.layout.loading_screen, linearLayoutPumps, false);
+                dialogLoadCancel = loadingScreen.findViewById(R.id.BtnCancel);
+                dialogLoadCancel.setVisibility(View.GONE);
+
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+
+                        linearLayoutPumps.addView(loadingScreen);
+                    }
+                });
+
                 String SocketData = "getPumps";
                 SocketController socketController = new SocketController(AddPump_Valve.this, SocketData);
 
@@ -555,8 +594,14 @@ String getPumpsForInfo, getZonesForInfo;
                 }
 
 
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
 
-                LayoutInflater layoutInflaterPump = LayoutInflater.from(AddPump_Valve.this);//Pump
+                        linearLayoutPumps.removeAllViews();
+                    }
+                });
+
 
 
                 if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
@@ -600,6 +645,21 @@ String getPumpsForInfo, getZonesForInfo;
 
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
+
+                LayoutInflater layoutInflaterValve = LayoutInflater.from(AddPump_Valve.this);//Valve
+                Button dialogLoadCancel;
+                final View loadingScreen = layoutInflaterValve.inflate(R.layout.loading_screen, linearLayoutValves, false);
+                dialogLoadCancel = loadingScreen.findViewById(R.id.BtnCancel);
+                dialogLoadCancel.setVisibility(View.GONE);
+
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+
+                        linearLayoutValves.addView(loadingScreen);
+                    }
+                });
+
                 String[] differentEquipment;
                 SocketData = "getValves";                                                                      //_____________________________________________________________Valves
                 SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
@@ -614,7 +674,14 @@ String getPumpsForInfo, getZonesForInfo;
                 }
 
 
-                LayoutInflater layoutInflaterValve = LayoutInflater.from(AddPump_Valve.this);//Valve
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+
+                        linearLayoutValves.removeAllViews();
+                    }
+                });
+
 
                 if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
                     //No Data
@@ -661,6 +728,21 @@ String getPumpsForInfo, getZonesForInfo;
 
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
+                LayoutInflater layoutInflaterSensor = LayoutInflater.from(AddPump_Valve.this);//Sensor
+
+                Button dialogLoadCancel;
+                final View loadingScreen = layoutInflaterSensor.inflate(R.layout.loading_screen, linearLayoutSensor, false);
+                dialogLoadCancel = loadingScreen.findViewById(R.id.BtnCancel);
+                dialogLoadCancel.setVisibility(View.GONE);
+
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+
+                        linearLayoutSensor.addView(loadingScreen);
+                    }
+                });
+
                 String[] differentEquipment;
                 SocketData = "getSensors";                                                                      //_____________________________________________________________Sensors
                 String processData = "";
@@ -673,7 +755,15 @@ String getPumpsForInfo, getZonesForInfo;
                 }catch (InterruptedException i){
 
                 }
-                LayoutInflater layoutInflaterSensor = LayoutInflater.from(AddPump_Valve.this);//Sensor
+
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+
+                        linearLayoutSensor.removeAllViews();
+                    }
+                });
+
                 if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
@@ -784,7 +874,7 @@ String getPumpsForInfo, getZonesForInfo;
     }
 
     private void SensorInfo(String decode){
-        TextView txtSensorBanner, txtEquipmentName, txtLocation, txtDescription, txtGPIO, txtStartTime, txtEquipmentWithSensor;
+        TextView txtSensorBanner, txtEquipmentName, txtDescription, txtGPIO, txtStartTime, txtEquipmentWithSensor;
         Button btnEdit,btnDelete;
         final String[] data = decode.split("#");
         final Dialog dialog = new Dialog(AddPump_Valve.this);
@@ -926,7 +1016,6 @@ String getPumpsForInfo, getZonesForInfo;
             linearLayoutShowEquipment.setVisibility(View.GONE);
 
         }else{
-            getSlaves(Integer.parseInt(data[4]));
 
             editEquipment = true;
             EquipmentID = data[0];
@@ -935,13 +1024,16 @@ String getPumpsForInfo, getZonesForInfo;
             btnAddEquipmentToDatabase.setText("Update");
             linearLayoutAddPump.setVisibility(View.VISIBLE);
             linearLayoutShowEquipment.setVisibility(View.GONE);
-            //for(int i = 0; i<adapter.getCount();i++){
-
-            //}
             spinnerSensor.setSelection(adapter.getPosition(data[2]));
-            SelectedEquipment(data);
-            showSensorLayout();
-
+            if(data[2].equals("Echo Sensor")){
+                editTextGPIODirectDrive.setText(data[4]);
+                getSlaves(Integer.parseInt(data[5]));
+                SelectedEquipment(data, 6);
+            }else {
+                getSlaves(Integer.parseInt(data[4]));
+                SelectedEquipment(data, 5);
+            }
+                showSensorLayout();
         }
 
         //editTextLocation.setText(data[2]);
@@ -949,38 +1041,91 @@ String getPumpsForInfo, getZonesForInfo;
     }
 
     @Override
-    public boolean onLongClick(View v) {
+    public boolean onLongClick(final View v) {
+        final Dialog dialogLoad = new Dialog(AddPump_Valve.this);
+        new Thread(new Runnable() { //Running on a new thread
+            public void run() {
 
-        String SocketData = "";
-        int id = v.getId();
-        int nagative = -1;
-        if(id>nagative){
-            SocketData = (id +"$getEquipmentInfo");
-            SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
-            try{
-                String processData = socketController.execute().get();
-                EquipmentInfo(processData);
-                //displayScheduleInfo(processData);
-            }catch (ExecutionException e){
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
 
-            }catch (InterruptedException i){
+                        final Button dialogLoadCancel;
+                        ProgressBar progressBar;
+                        TextView connectionInfo;
+                        dialogLoad.setContentView(R.layout.loading_screen);//popup view is the layout you created
+                        progressBar = dialogLoad.findViewById(R.id.progressBar);
+                        dialogLoadCancel = dialogLoad.findViewById(R.id.BtnCancel);
+                        dialogLoadCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogLoad.dismiss();
+                            }
+                        });
+
+                        dialogLoad.show();
+                    }
+                });
+
+                String SocketData = "";
+                int id = v.getId();
+                int nagative = -1;
+
+
+
+                if(id>nagative){
+                    SocketData = (id +"$getEquipmentInfo");
+                    SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
+                    try{
+                        final String processData = socketController.execute().get();
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                dialogLoad.dismiss();
+                                EquipmentInfo(processData);
+                            }
+                        });
+
+                        //displayScheduleInfo(processData);
+                    }catch (ExecutionException e){
+
+                    }catch (InterruptedException i){
+
+                    }
+                }else{
+                    id = id * (-1);
+                    SocketData = id +"$getSensorInfo";
+
+                    SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
+                    try{
+                        final String processData = socketController.execute().get();
+
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                dialogLoad.dismiss();
+                                SensorInfo(processData);
+                            }
+                        });
+
+
+                        //displayScheduleInfo(processData);
+                    }catch (ExecutionException e){
+
+                    }catch (InterruptedException i){
+
+                    }
+                }
+
+
+
 
             }
-        }else{
-            id = id * (-1);
-            SocketData = id +"$getSensorInfo";
+        }).start();
 
-            SocketController socketController = new SocketController(AddPump_Valve.this,SocketData);
-            try{
-                String processData = socketController.execute().get();
-                SensorInfo(processData);
-                //displayScheduleInfo(processData);
-            }catch (ExecutionException e){
 
-            }catch (InterruptedException i){
 
-            }
-        }
+
 
 
         return true;
@@ -992,6 +1137,7 @@ String getPumpsForInfo, getZonesForInfo;
         switch (v.getId()){
             case R.id.RadioPump:
                 checkBoxDirectOnline.setVisibility(View.VISIBLE);
+                txtGPIODirectOnline.setText("DirectOnline Power Off");
                 //txtGPIODirectOnline.setVisibility(View.VISIBLE);
                 showEquipmentLayout();
                 break;
@@ -1381,9 +1527,9 @@ String getPumpsForInfo, getZonesForInfo;
 
     }
 
-    private void SelectedEquipment(String[] data){
+    private void SelectedEquipment(String[] data, int StartPosition){
         selectedEquipment.clear();
-        for (int i = 5; i < data.length; i++) {
+        for (int i = StartPosition; i < data.length; i++) {
             selectedEquipment.add(Integer.parseInt(data[i]));
         }
         linearLayoutScrollManualPump = findViewById(R.id.LinearLayoutScrollManualPump);

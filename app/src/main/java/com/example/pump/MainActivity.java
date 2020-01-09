@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         linearLayoutPumpController = findViewById(R.id.LinearLayoutPumpController);
         linearLayoutAddPump = findViewById(R.id.LinearLayoutAddPump);
         linearLayoutConnecting = findViewById(R.id.LinearLayoutConnecting);
-        linearLayoutBtnValve = findViewById(R.id.LinearLayoutBtnValve);
+        linearLayoutBtnValve = findViewById(R.id.ScrollViewAlarmSensor);
         linearLayoutBtnPump = findViewById(R.id.LinearLayoutBtnPump);
         UIHandler = new Handler(Looper.getMainLooper());
         //populatePumpsValves();

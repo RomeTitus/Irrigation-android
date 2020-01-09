@@ -45,18 +45,18 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
         linearLayout1 = findViewById(R.id.LinearLayout1);
         linearLayout2 = findViewById(R.id.LinearLayout2);
         linearLayoutBtnPump = findViewById(R.id.LinearLayoutBtnPump);
-        linearLayoutBtnValve = findViewById(R.id.LinearLayoutBtnValve);
+        linearLayoutBtnValve = findViewById(R.id.ScrollViewZone);
         linearLayoutCreateSchedule = findViewById(R.id.LinearLayoutCreateSchedule);
         linearLayoutPumpController = findViewById(R.id.LinearLayoutPumpController);
         linearLayoutSchedule = findViewById(R.id.LinearLayoutSchedule);
         scrollView1 = findViewById(R.id.ScrollView1);
-        textView5 = findViewById(R.id.TextView5);
-        textView6 = findViewById(R.id.TextView6);
-        textView7 = findViewById(R.id.TextView7);
-        textView8 = findViewById(R.id.TextView8);
-        textView9 = findViewById(R.id.TextView9);
-        textView10 = findViewById(R.id.TextView10);
-        textView11 = findViewById(R.id.TextView11);
+        //textView5 = findViewById(R.id.TextView5);
+        //textView6 = findViewById(R.id.TextView6);
+        //textView7 = findViewById(R.id.TextView7);
+        //textView8 = findViewById(R.id.TextView8);
+        //textView9 = findViewById(R.id.TextView9);
+        //textView10 = findViewById(R.id.TextView10);
+        //textView11 = findViewById(R.id.TextView11);
         scheduleNameText = findViewById(R.id.textView10);
         startTimeText = findViewById(R.id.textView6);
         textDisplayValve = findViewById(R.id.TxtDisplayValve);
@@ -70,7 +70,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
         switchTh = findViewById(R.id.SwitchTh);
         switchF = findViewById(R.id.SwitchF);
         switchSa = findViewById(R.id.SwitchSa);
-        btnSchedule = findViewById(R.id.BtnSchedule);
+        btnSchedule = findViewById(R.id.BtnAlarmSchedule);
         btnBack = findViewById(R.id.BtnBack);
         btnCancel = findViewById(R.id.BtnCancel);
         btnSave = findViewById(R.id.BtnSave);
@@ -336,19 +336,48 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
     }
 
     @Override
-    public boolean onLongClick(View v) {
+    public boolean onLongClick(final View v) {
 
-        String SocketData = "";
-        SocketData = v.getId() +"$getScheduleInfo";
-        SocketController socketController = new SocketController(Schedule.this,SocketData);
-        try{
-            String processData = socketController.execute().get();
-            displayScheduleInfo(processData);
-        }catch (ExecutionException e){
+        final Dialog dialogLoad = new Dialog(Schedule.this);
+        final Button dialogLoadCancel;
+        dialogLoad.setContentView(R.layout.loading_screen);//popup view is the layout you created
+        dialogLoadCancel = dialogLoad.findViewById(R.id.BtnCancel);
+        dialogLoadCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogLoad.dismiss();
+            }
+        });
+        dialogLoad.show();
 
-        }catch (InterruptedException i){
+        new Thread(new Runnable() { //Running on a new thread
+            public void run() {
 
-        }
+                String SocketData = "";
+                SocketData = v.getId() +"$getScheduleInfo";
+                SocketController socketController = new SocketController(Schedule.this,SocketData);
+                try{
+                    final String processData = socketController.execute().get();
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            dialogLoad.dismiss();
+                            displayScheduleInfo(processData);
+                        }
+                    });
+                }catch (ExecutionException e){
+
+                }catch (InterruptedException i){
+
+                }
+
+
+            }
+
+        }).start();
+
+
+
 
 
 
@@ -356,6 +385,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
     }
 
  private void displayScheduleInfo(final String data){
+
      TextView txtDays, txtStartTime, txtDuration, txtPumpInfo, txtValveInfo;
      Button edit, delete;
      LinearLayout linearLayoutScrollInfo;
@@ -479,20 +509,38 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
         linearLayout1.setVisibility(View.GONE);
         linearLayout2.setVisibility(View.GONE);
         scrollView1.setVisibility(View.GONE);
+
+        switchS.setChecked(true);
+        switchM.setChecked(true);
+        switchT.setChecked(true);
+        switchW.setChecked(true);
+        switchTh.setChecked(true);
+        switchF.setChecked(true);
+        switchSa.setChecked(true);
     }
 
     private void getSchedule() {
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
-
+                LayoutInflater layoutInflaterSchedule = LayoutInflater.from(Schedule.this);
                 String processData = "";
                 String SocketData = "";
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutSchedule.removeAllViews();
-                    }
-                });
+
+
+
+                    Button dialogLoadCancel;
+                    final View loadingScreen = layoutInflaterSchedule.inflate(R.layout.loading_screen, linearLayoutSchedule, false);
+                    dialogLoadCancel = loadingScreen.findViewById(R.id.BtnCancel);
+                    dialogLoadCancel.setVisibility(View.GONE);
+
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+
+                            linearLayoutSchedule.addView(loadingScreen);
+                        }
+                    });
+
 
                 SocketData = "getSchedule";
                 String[] differentSchedule;
@@ -506,8 +554,13 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 }catch (InterruptedException i){
 
                 }
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+                        linearLayoutSchedule.removeAllViews();
+                    }
+                });
 
-                LayoutInflater layoutInflaterSchedule = LayoutInflater.from(Schedule.this);//Pump
 
                 if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
                     //No Data
@@ -515,19 +568,72 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                     differentSchedule = processData.split("#");
 
                     Switch switchSchedule;
-                    TextView name;
+                    TextView name, Sunday, Monday, Tuesday, Wednessday, Thursday, Friday, Saturday, PumpName;
                     for (int i = 0; i < differentSchedule.length; i++) {
 
                         final String[] buttonInfo = differentSchedule[i].split(",");
 
                         View view = layoutInflaterSchedule.inflate(R.layout.schedules, linearLayoutSchedule, false); //_____________________________________________________________schedules
-                        switchSchedule = view.findViewById(R.id.switch1);
-                        name = view.findViewById(R.id.textView5);
-                        name.setId(Integer.parseInt(buttonInfo[0]));
+                        switchSchedule = view.findViewById(R.id.sensor_switch_Enable);
+                        name = view.findViewById(R.id.TxtSensorType);
+                        Sunday = view.findViewById(R.id.TxtSunday);
+                        Monday = view.findViewById(R.id.TxtMonday);
+                        Tuesday = view.findViewById(R.id.TxtTuesday);
+                        Wednessday = view.findViewById(R.id.TxtWednesday);
+                        Thursday = view.findViewById(R.id.TxtThursday);
+                        Friday = view.findViewById(R.id.TxtFriday);
+                        Saturday = view.findViewById(R.id.TxtSaturday);
+                        PumpName = view.findViewById(R.id.TxtPumpNameInfo);
+                        View horizontalLine = view.findViewById(R.id.view9);
+                        view.setId(Integer.parseInt(buttonInfo[0]));
                         switchSchedule.setId(Integer.parseInt(buttonInfo[0]));
                         name.setText((buttonInfo[1]) + " :" + buttonInfo[2]);
-                        name.setOnLongClickListener(Schedule.this); //Used to view the details
+                        view.setOnLongClickListener(Schedule.this); //Used to view the details
 
+                        try {
+                            PumpName.setText((buttonInfo[4]));
+
+                            Sunday.setVisibility(View.INVISIBLE);
+                            Monday.setVisibility(View.INVISIBLE);
+                            Tuesday.setVisibility(View.INVISIBLE);
+                            Wednessday.setVisibility(View.INVISIBLE);
+                            Thursday.setVisibility(View.INVISIBLE);
+                            Friday.setVisibility(View.INVISIBLE);
+                            Saturday.setVisibility(View.INVISIBLE);
+
+                            for (int j = 5; j < buttonInfo.length; j++) {
+
+
+                                if(buttonInfo[j].equals("SUNDAY")){
+                                    Sunday.setVisibility(View.VISIBLE);
+                                }else if(buttonInfo[j].equals("MONDAY")){
+                                    Monday.setVisibility(View.VISIBLE);
+                                }else if(buttonInfo[j].equals("TUESDAY")){
+                                    Tuesday.setVisibility(View.VISIBLE);
+                                }else if(buttonInfo[j].equals("WEDNESDAY")){
+                                    Wednessday.setVisibility(View.VISIBLE);
+                                }else if(buttonInfo[j].equals("THURSDAY")){
+                                    Thursday.setVisibility(View.VISIBLE);
+                                }else if(buttonInfo[j].equals("FRIDAY")){
+                                    Friday.setVisibility(View.VISIBLE);
+                                }else if(buttonInfo[j].equals("SATURDAY")){
+                                    Saturday.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+
+                        }catch (Exception e){
+                            Sunday.setVisibility(View.GONE);
+                            Monday.setVisibility(View.GONE);
+                            Tuesday.setVisibility(View.GONE);
+                            Wednessday.setVisibility(View.GONE);
+                            Thursday.setVisibility(View.GONE);
+                            Friday.setVisibility(View.GONE);
+                            Saturday.setVisibility(View.GONE);
+                            PumpName.setVisibility(View.GONE);
+
+                            horizontalLine.setVisibility(View.GONE);
+                        }
 
                         final View add = view;
                         final Switch finalSwitchSchedule = switchSchedule; //need to make final in order to run on main UI thread
@@ -665,6 +771,14 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
     }
 
     private void fillInDates(String[] DeCode){
+        switchS.setChecked(false);
+        switchM.setChecked(false);
+        switchT.setChecked(false);
+        switchW.setChecked(false);
+        switchTh.setChecked(false);
+        switchF.setChecked(false);
+        switchSa.setChecked(false);
+
         String[] date = DeCode[0].split(","); //stores the date information
         for (int i = 0; i < date.length; i++) {
 
@@ -810,6 +924,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
         }).start();
     }
 
+    /*
     private void DatePicker(){
         switchS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -888,6 +1003,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
             }
         });
     }
+    */
 
     @Override
     public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
@@ -916,18 +1032,3 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
     }  //Used for the Virtual View Switches
 }
 
-/*
-new Thread(new Runnable() { //Running on a new thread
-            public void run() {
-
-            }
-        }).start();
-
-
-        runOnUI(new Runnable() { //used to speak to main thread
-                            @Override
-                            public void run() {
-
-                            }
-                        });
-*/

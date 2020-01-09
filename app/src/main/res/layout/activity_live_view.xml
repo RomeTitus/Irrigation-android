@@ -44,6 +44,7 @@
                 android:id="@+id/LinearLayoutScrollActiveZone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical" />
         </ScrollView>
 
@@ -69,6 +70,7 @@
                 android:id="@+id/LinearLayoutQueueZone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical" />
         </ScrollView>
 

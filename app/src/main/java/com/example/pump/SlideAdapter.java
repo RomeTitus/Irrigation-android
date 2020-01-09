@@ -1,5 +1,6 @@
 package com.example.pump;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,10 +35,14 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
     LayoutInflater inflater;
     private int position;
     View view;
-    Button btnAddPumpValve, btnViewSchedule, btnEarth, btnStartManual, btnStopManual, btnConnectController;
+    Button btnAddPumpValve, btnViewSchedule, btnEarth, btnStartManual, btnStopManual, btnConnectController, btnAlarm;
     LinearLayout linearLayoutScrollActiveZone, linearLayoutQueueZone, linearLayoutScrollManualPump, linearLayoutScrollManualZone, linearLayoutManualPage;
     MaskedEditText editTextDuration;
     TextView textView14,textView15, textView17;
+    Switch switchAsyncRun;
+
+    ProgressBar progressBarManual;
+    ImageView ManualSuccsessfullImage;
 
     List<String> pumpIDs = new ArrayList<String>();
     List<String> zoneIDs = new ArrayList<String>();
@@ -137,13 +144,14 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         }
         String[] splitData = processData.split("#");
 
-        String [][] ActiveSensor = new String[splitData.length][3];//we will be populating this with the sensor data
+        String [][] ActiveSensor = new String[splitData.length][4];//we will be populating this with the sensor data
 
         for (int i = 0; i < splitData.length; i++) {
             String[] DataRow = splitData[i].split(",");
             ActiveSensor[i][0] = DataRow[0];
             ActiveSensor[i][1] = DataRow[1];
             ActiveSensor[i][2] = DataRow[2];
+            ActiveSensor[i][3] = DataRow[3];
         }
         return ActiveSensor;
     }
@@ -217,7 +225,6 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                         Old = getCurrentSchedule(Old);
 
-
                         SystemClock.sleep(8000);
                     }
                 }
@@ -251,6 +258,8 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         else if (position == 1) {
 
+
+
             view = inflater.inflate(R.layout.activity_manual, container, false);
             linearLayoutScrollManualPump = view.findViewById(R.id.LinearLayoutScrollManualPump);
             linearLayoutScrollManualZone = view.findViewById(R.id.LinearLayoutScrollManualZone);
@@ -258,19 +267,29 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             linearLayoutScrollManualZone.removeAllViews();
             linearLayoutManualPage = view.findViewById(R.id.LinearLayoutManualPage);
 
+            progressBarManual = view.findViewById(R.id.progressBarManual);
+
+            ManualSuccsessfullImage = view.findViewById(R.id.ManualSuccsessfullImage);
+
             textView14= view.findViewById(R.id.TextView14);
             textView15 = view.findViewById(R.id.TextView15);
             textView17 = view.findViewById(R.id.TextView17);
             editTextDuration = view.findViewById(R.id.EditTextManualDuration);
-
+            switchAsyncRun = view.findViewById(R.id.switchAsyncRun);
 
 
             textView14.setTextColor(Color.parseColor("#FFFFFF"));
             textView15.setTextColor(Color.parseColor("#FFFFFF"));
             textView17.setTextColor(Color.parseColor("#FFFFFF"));
 
+            progressBarManual.setVisibility(View.INVISIBLE);
+            ManualSuccsessfullImage.setVisibility(View.GONE);
+
+
+
             new Thread(new Runnable() { //Running on a new thread
                 public void run() {
+
 
                     //boolean manualSchedule;
                     boolean OLDmanualSchedule = false;
@@ -291,12 +310,10 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                             OLDmanualSchedule = UpdateManualButtonStatus(OLDmanualSchedule);
                         }
-                        SystemClock.sleep(8000);
+                        SystemClock.sleep(1000);
 
 
                     }
-
-
                 }
                 //}
             }).start();
@@ -330,7 +347,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             btnAddPumpValve = view.findViewById(R.id.BtnAddPumpValve);
             btnViewSchedule = view.findViewById(R.id.BtnViewSchedule);
             btnConnectController = view.findViewById(R.id.BtnConnectController);
-
+            btnAlarm = view.findViewById(R.id.btnAlarm);
 
 
             btnAddPumpValve.setOnClickListener(new View.OnClickListener() {
@@ -360,6 +377,16 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     //------------------------------------------------------------------
                     Intent add_controller = new Intent(view.getContext(),Add_Controller.class);
                     view.getContext().startActivity(add_controller);
+                    //------------------------------------------------------------------
+                }
+            });
+
+            btnAlarm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //------------------------------------------------------------------
+                    Intent security = new Intent(view.getContext(),Security_Layout.class);
+                    view.getContext().startActivity(security);
                     //------------------------------------------------------------------
                 }
             });
@@ -479,6 +506,8 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     if((arraySize+1) < zoneIDs.size()){
                         arraySize++;
+                        int btnValve2ID = Integer.parseInt(zoneIDs.get(arraySize));
+                        btnValve2ID = btnValve2ID;
                         btnValve2 = view.findViewById(Integer.parseInt(zoneIDs.get(arraySize)));
 
                         match = false;
@@ -544,6 +573,22 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         final LayoutInflater layoutInflaterActiveSchedule = LayoutInflater.from(this.context);//Used to inflate the schedules to the user
 
         //String[][] OldQueue = new String[0][0];
+        if(Old.length <1){
+            Button dialogLoadCancel;
+
+            final View v = layoutInflaterActiveSchedule.inflate(R.layout.loading_screen, linearLayoutScrollActiveZone, false);
+            dialogLoadCancel = v.findViewById(R.id.BtnCancel);
+            dialogLoadCancel.setVisibility(View.GONE);
+
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    linearLayoutScrollActiveZone.removeAllViews();
+                    linearLayoutScrollActiveZone.addView(v);
+                }
+            });
+        }
+
         String[][] ActiveSchedule = getActivePumps();
         Boolean equals = false;
         for (int i = 0; i < ActiveSchedule.length; i++) {
@@ -562,15 +607,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         }
 
 
-        if (equals == false) {
-            Old = ActiveSchedule;
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    linearLayoutScrollActiveZone.removeAllViews();
-                }
-            });
-        }
+
 
         TextView txtScheduleName, txtActiveZone, txtActivePump, txtActiveStartTime, txtActiveEndTime, txtNoActivity;
 
@@ -596,6 +633,15 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         }
 
+        if (equals == false) {
+            Old = ActiveSchedule;
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    linearLayoutScrollActiveZone.removeAllViews();
+                }
+            });
+        }
 
         if (!processData.equals("Data Empty") && !processData.equals("Server Not Running")) {
 
@@ -701,14 +747,188 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         return ActiveSchedule;
     }
 
-    private String[][] getSensorLiveView(String[][] OldSensorDetails){
+    private String[][] getSensorLiveView(String[][] OldSensorDetails) {
+
+
         final LayoutInflater layoutSensorStatus = LayoutInflater.from(context);//Used to inflate the schedules to the user
         //String[][] OldSensorDetails = new String[0][0];
+
+        if (OldSensorDetails.length < 1) {
+            Button dialogLoadCancel;
+
+            final View v = layoutSensorStatus.inflate(R.layout.loading_screen, linearLayoutQueueZone, false);
+            dialogLoadCancel = v.findViewById(R.id.BtnCancel);
+            dialogLoadCancel.setVisibility(View.GONE);
+
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    linearLayoutQueueZone.removeAllViews();
+                    linearLayoutQueueZone.addView(v);
+                }
+            });
+        }
+
+
         String[][] ActiveSensorDetails = getActiveSensor();
+
+        runOnUI(new Runnable() { //used to speak to main thread
+            @Override
+            public void run() {
+                linearLayoutQueueZone.removeAllViews();
+            }
+        });
+
+
         Boolean sameSensorEquals = false;
 
+        if (ActiveSensorDetails[0][0].equals("No Sensor")) {
+            TextView txtNoActivity;
+            final View v = layoutSensorStatus.inflate(R.layout.activity_no_live_equipment, linearLayoutQueueZone, false);
+            txtNoActivity = v.findViewById(R.id.TxtNoActivity);
+            txtNoActivity.setText("No Sensors");
+
+            if (sameSensorEquals == false) {
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+                        linearLayoutQueueZone.addView(v);
+                    }
+                });
+            }
+
+        }else {
 
 
+            for (int i = 0; i < ActiveSensorDetails.length; i++) {
+
+                if (ActiveSensorDetails[i][1].equals("Pressure Sensor")) {
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][1]);
+
+                    if (ActiveSensorDetails[i][1].equals("0")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
+                        txtPressureStatus.setText("Pressure: LOW");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_high);
+                        txtPressureStatus.setText("Pressure: HIGH");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Echo Sensor")) {
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                    imageSesnorStatus.setBackgroundResource(R.drawable.echo_sensor_img);
+                    txtPressureStatus.setText(ActiveSensorDetails[i][3] + " CM");
+
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Mini Infrared PIR")) {
+
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                    if (ActiveSensorDetails[i][3].equals("0")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pir_low_img);
+                        txtPressureStatus.setText("Nothing detected");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.pir_high_img);
+                        txtPressureStatus.setText("PIR has been set off");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Vibration Sensor")) {
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                    if (ActiveSensorDetails[i][3].equals("1")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.vibration_low_img);
+                        txtPressureStatus.setText("No Vibrations");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.vibration_high_img);
+                        txtPressureStatus.setText("Vibrations Detected!");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                } else if (ActiveSensorDetails[i][1].equals("Sound Detection Sensor")) {
+
+
+                    TextView txtSensorName, txtPressureStatus;
+                    ImageView imageSesnorStatus;
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                    txtSensorName = v.findViewById(R.id.TxtSensorName);
+                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                    txtSensorName.setText(ActiveSensorDetails[i][1]);
+
+                    if (ActiveSensorDetails[i][3].equals("0")) {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.mic_low_img);
+                        txtPressureStatus.setText("No Sound");
+                    } else {
+                        imageSesnorStatus.setBackgroundResource(R.drawable.mic_high_img);
+                        txtPressureStatus.setText("Sound Detected!");
+                    }
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            linearLayoutQueueZone.addView(v);
+                        }
+                    });
+
+                }
+            }
+        }
+        /*
         for (int i = 0; i < ActiveSensorDetails.length; i++) {
 
             if (OldSensorDetails.length == ActiveSensorDetails.length) { //if its not the same length, then We need to update the Layout View
@@ -729,6 +949,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             }
 
         }
+
 
         //Displays that there is no Active Sensors
         if (ActiveSensorDetails[0][0].equals("No Sensor")) {
@@ -787,7 +1008,12 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 }
             }
         }
+
+
+         */
         return ActiveSensorDetails;
+
+
     }
 
     private void getNextScheudleDue(){
@@ -867,10 +1093,32 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
     }
 
     private String getManualPagePumpsZones(int OLDPumpCount, int OLDZoneCount){
-
+        LayoutInflater layoutInflaterScrollManualPump = LayoutInflater.from(context);//Used to inflate the Zones and pumps
+        LayoutInflater layoutInflaterScrollManualZone = LayoutInflater.from(context);
         Button btnPump, btnPump2, btnPump3, btnValve, btnValve2, btnValve3, btnStop;
         btnStop = view.findViewById(R.id.BtnStopManual);
         String[] differentButtons;
+
+        //Display Loading screen
+        if(OLDPumpCount == 0){
+            Button dialogLoadCancel;
+
+            final View loadingScreen = layoutInflaterScrollManualPump.inflate(R.layout.loading_screen, linearLayoutScrollManualPump, false);
+            dialogLoadCancel = loadingScreen.findViewById(R.id.BtnCancel);
+            dialogLoadCancel.setVisibility(View.GONE);
+
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    linearLayoutScrollManualPump.removeAllViews();
+                    linearLayoutScrollManualPump.addView(loadingScreen);
+                }
+            });
+        }
+
+
+
+
         final SocketController socketControllerPumps = new SocketController(context, "getPumps");
 
         String processData = "";
@@ -889,8 +1137,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         } catch (InterruptedException i) {
 
         }
-        LayoutInflater layoutInflaterScrollManualPump = LayoutInflater.from(context);//Used to inflate the Zones and pumps
-        LayoutInflater layoutInflaterScrollManualZone = LayoutInflater.from(context);
+
 
 
         if (!processData.equals("Data Empty") && !processData.equals("Server Not Running")) {
@@ -925,7 +1172,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     btnPump.setText(buttonInfo[1]);
                     btnPump.setOnClickListener(SlideAdapter.this);
-                    v.setId(i);
+                    v.setId(i*(-1));
                     if ((i + 1) < differentButtons.length) {
                         i++;
                         String[] buttonInfo2 = differentButtons[i].split(","); //stores the information for the second Zone
@@ -979,6 +1226,25 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         }
 
         //_____________________________________________________________Valves
+
+
+        if(OLDZoneCount == 0){
+            Button dialogLoadCancel;
+
+            final View loadingScreen = layoutInflaterScrollManualPump.inflate(R.layout.loading_screen, linearLayoutScrollManualZone, false);
+            dialogLoadCancel = loadingScreen.findViewById(R.id.BtnCancel);
+            dialogLoadCancel.setVisibility(View.GONE);
+
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    linearLayoutScrollManualZone.removeAllViews();
+                    linearLayoutScrollManualZone.addView(loadingScreen);
+                }
+            });
+        }
+
+
         final SocketController socketControllerZone = new SocketController(context, "getValves");
         try {
             processData = socketControllerZone.execute().get();
@@ -1012,7 +1278,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     String[] buttonInfo = differentButtons[i].split(",");
 
-                    final View v = layoutInflaterScrollManualZone.inflate(R.layout.all_valves, linearLayoutScrollManualZone, false);
+                    View v = layoutInflaterScrollManualZone.inflate(R.layout.all_valves, linearLayoutScrollManualZone, false);
 
                     btnValve = v.findViewById(R.id.BtnValve);
                     btnValve2 = v.findViewById(R.id.BtnValve2);
@@ -1023,7 +1289,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     btnValve3.setBackgroundResource(android.R.drawable.btn_default);
                     btnValve2.setVisibility(View.GONE);
                     btnValve3.setVisibility(View.GONE);
-                    v.setId(i);
+                    v.setId(i*(-1));
                     //j++;
                     btnValve.setId(Integer.parseInt(buttonInfo[0]));
 
@@ -1070,18 +1336,11 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     }
 
                     //final boolean finalManualSchedule1 = manualSchedule;
-                    final Button finalBtnValve = btnValve;
-                    final Button finalBtnValve2 = btnValve2;
-                    final Button finalBtnValve3 = btnValve3;
+                    final View finalView = v;
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            // if(finalManualSchedule1 == true){
-                            //     finalBtnValve.setEnabled(false);
-                            //      finalBtnValve2.setEnabled(false);
-                            //      finalBtnValve3.setEnabled(false);
-                            //  }
-                            linearLayoutScrollManualZone.addView(v);
+                            linearLayoutScrollManualZone.addView(finalView);
                         }
                     });
                     //j++;                                                        //_____________________________________________________________Valves
@@ -1095,8 +1354,80 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
     }
 
     private void StopManual(){
-        SocketController socketController = new SocketController(context,"StopManualSchedule");
-        socketController.execute();
+
+        progressBarManual.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() { //Running on a new thread
+            public void run() { //used to ge the pumps that are in today's schedule
+                try{
+                    //SocketController socketController = new SocketController(context,"ping");
+                    SocketController socketController = new SocketController(context,"StopManualSchedule");
+                    final String responce = socketController.execute().get();
+
+                    if(!responce.equals("Server Not Running")) {
+
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+
+                                progressBarManual.setVisibility(View.GONE);
+                                ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                                ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_up_black_24dp);
+
+                            }
+                        });
+
+                        SystemClock.sleep(5000);
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+
+                                progressBarManual.setVisibility(View.INVISIBLE);
+                                ManualSuccsessfullImage.setVisibility(View.GONE);
+                            }
+                        });
+
+                    }else{
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+
+                                progressBarManual.setVisibility(View.GONE);
+                                ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                                ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_down_black_24dp);
+
+                            }
+                        });
+                    }
+
+                }catch (ExecutionException e){
+
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+
+                            progressBarManual.setVisibility(View.GONE);
+                            ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                            ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_down_black_24dp);
+
+                        }
+                    });
+
+                }catch (InterruptedException i){
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+
+                            progressBarManual.setVisibility(View.GONE);
+                            ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                            ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_down_black_24dp);
+
+                        }
+                    });
+                }
+            }
+        }).start();
+
+
         btnStartManual.setEnabled(true);
         editTextDuration.setEnabled(true);
         editTextDuration.setText("");
@@ -1213,12 +1544,96 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
             String send = "";
             send = send + editTextDuration.getText();
+
+
+            if(switchAsyncRun.isChecked()){
+                send = send + ",1";
+            }else{
+                send = send + ",0";
+            }
+
             for (int i = 0; i < selectedEquipment.size(); i++) {
                 send = send + "," + selectedEquipment.get(i);
             }
             send = send + "$MANUALSCHEDULE";
-            SocketController socketController = new SocketController(context,send);
-            socketController.execute();
+
+
+
+
+            progressBarManual.setVisibility(View.VISIBLE);
+            final String finalSend = send;
+            new Thread(new Runnable() { //Running on a new thread
+                public void run() { //used to ge the pumps that are in today's schedule
+                    try{
+                        //SocketController socketController = new SocketController(context,"ping");
+                        SocketController socketController = new SocketController(context, finalSend);
+
+                        final String responce = socketController.execute().get();
+
+                        if(!responce.equals("Server Not Running")) {
+
+                            runOnUI(new Runnable() { //used to speak to main thread
+                                @Override
+                                public void run() {
+
+                                    progressBarManual.setVisibility(View.GONE);
+                                    ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                                    ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_up_black_24dp);
+
+                                }
+                            });
+
+                            SystemClock.sleep(5000);
+                            runOnUI(new Runnable() { //used to speak to main thread
+                                @Override
+                                public void run() {
+
+                                    progressBarManual.setVisibility(View.INVISIBLE);
+                                    ManualSuccsessfullImage.setVisibility(View.GONE);
+                                }
+                            });
+
+                        }else{
+                            runOnUI(new Runnable() { //used to speak to main thread
+                                @Override
+                                public void run() {
+
+                                    progressBarManual.setVisibility(View.GONE);
+                                    ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                                    ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_down_black_24dp);
+
+                                }
+                            });
+                        }
+
+                    }catch (ExecutionException e){
+
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+
+                                progressBarManual.setVisibility(View.GONE);
+                                ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                                ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_down_black_24dp);
+
+                            }
+                        });
+
+                    }catch (InterruptedException i){
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+
+                                progressBarManual.setVisibility(View.GONE);
+                                ManualSuccsessfullImage.setVisibility(View.VISIBLE);
+                                ManualSuccsessfullImage.setImageResource(R.drawable.ic_thumb_down_black_24dp);
+
+                            }
+                        });
+                    }
+                }
+            }).start();
+
         }
     }
 

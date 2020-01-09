@@ -6,8 +6,11 @@
 
         <item>Pressure Sensor</item>
         <item>Rain Meter</item>
-        <item>moisture</item>
-
+        <item>moisture and temp Sensor</item>
+        <item>Echo Sensor</item>
+        <item>Mini Infrared PIR</item>
+        <item>Vibration Sensor</item>
+        <item>Sound Detection Sensor</item>
     </string-array>
 
 </resources>

@@ -13,6 +13,7 @@ import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 
 
@@ -46,7 +47,6 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
             this.ExternalIP = IP;
             this.Externalport = port;
         }
-
    }
 
 
@@ -106,21 +106,25 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... voids) {
+
+
+
         boolean pass = true; //used to check if the connection was stable
         if (InternalIP != null && Internalport != -1) {
         try {
             //timeout = 20;
             this.socket = new Socket();
-            this.socket.setSoTimeout(timeout);
-            //this.socket.connect(new InetSocketAddress(InternalIP, Internalport), 1000);
-            this.socket.connect(new InetSocketAddress(InternalIP, Internalport));
+            //this.socket.setSoTimeout(timeout);
+            this.socket.connect(new InetSocketAddress(InternalIP, Internalport), 20);
+            //this.socket.connect(new InetSocketAddress(InternalIP, Internalport));
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             printWriterl = new PrintWriter(socket.getOutputStream());
             printWriterl.write(rawData);
             printWriterl.flush();//Sends the message
             long startTime = System.nanoTime();
 
-            response = in.readLine();
+            response = URLDecoder.decode(in.readLine(), "UTF-8");
+
             long endTime = System.nanoTime();
             long timeElapsed = endTime - startTime;
             timeElapsedMilliseconds = timeElapsed / 1000000;
@@ -133,7 +137,12 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                 return "Server Not Running";
             } else {
 
-                if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                /*if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                    noConnection = true;
+                    return "Server Not Running";
+                }
+*/
+                if (response.contains("SSH-2.0-OpenSSH") || response.contains("RFB 003.008")) {
                     noConnection = true;
                     return "Server Not Running";
                 }
@@ -155,6 +164,8 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
     }else{
             pass = false;
         }
+
+
 
         if(pass == false && ExternalIP != null && Externalport != -1) {
             try {
@@ -179,7 +190,13 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                     return "Server Not Running";
                 } else {
 
-                    if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                    /*if (response.equals("SSH-2.0-OpenSSH_7.2p2 Ubuntu-4ubuntu2.8")) {
+                        noConnection = true;
+                        return "Server Not Running";
+                    }
+                    */
+
+                    if (response.contains("SSH-2.0-OpenSSH") || response.contains("RFB 003.008")) {
                         noConnection = true;
                         return "Server Not Running";
                     }
