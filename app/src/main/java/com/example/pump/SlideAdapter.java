@@ -105,15 +105,25 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         String[] splitData = processData.split("#");
         String [][] ActiveEquipment = new String[splitData.length][6];//we are returnig this
 
-        for (int i = 0; i < splitData.length; i++) {
-            String[] DataRow = splitData[i].split(",");
-            ActiveEquipment[i][0] = DataRow[0];
-            ActiveEquipment[i][1] = DataRow[1];
-            ActiveEquipment[i][2] = DataRow[2];
-            ActiveEquipment[i][3] = DataRow[3];
-            ActiveEquipment[i][4] = DataRow[4];
-            ActiveEquipment[i][5] = DataRow[5];
-        }
+
+        int j = 0;
+            for (int i = 0; i < splitData.length; i++) {
+
+                try {
+                    String[] DataRow = splitData[i].split(",");
+                    ActiveEquipment[j][0] = DataRow[0];
+                    ActiveEquipment[j][1] = DataRow[1];
+                    ActiveEquipment[j][2] = DataRow[2];
+                    ActiveEquipment[j][3] = DataRow[3];
+                    ActiveEquipment[j][4] = DataRow[4];
+                    ActiveEquipment[j][5] = DataRow[5];
+                    j = j + 1;
+
+                } catch (Exception e) {
+
+                }
+            }
+
 
         return ActiveEquipment;
 
@@ -593,17 +603,21 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         Boolean equals = false;
         for (int i = 0; i < ActiveSchedule.length; i++) {
 
-            //for (int j=0; j < Old.length; j++){
-            if (Old.length == ActiveSchedule.length) { //if its not the same length, then We need to update the Layout View
-                if (Old[i][0].equals(ActiveSchedule[i][0])) {
-                    equals = true;
-                    //i = ActiveSchedule.length+1;
-                } else {
-                    equals = false;
-                    i = ActiveSchedule.length + 1; //jumps out the for loop
-                    //j = Old.length +1;
+            try{
+                if (Old.length == ActiveSchedule.length) { //if its not the same length, then We need to update the Layout View
+                    if (Old[i][0].equals(ActiveSchedule[i][0])) {
+                        equals = true;
+                        //i = ActiveSchedule.length+1;
+                    } else {
+                        equals = false;
+                        i = ActiveSchedule.length + 1; //jumps out the for loop
+                        //j = Old.length +1;
+                    }
                 }
+            }catch (Exception e){
+
             }
+
         }
 
 
