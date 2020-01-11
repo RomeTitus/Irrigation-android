@@ -1,6 +1,5 @@
 package com.example.pump;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +8,7 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +36,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
     private int position;
     View view;
     Button btnAddPumpValve, btnViewSchedule, btnEarth, btnStartManual, btnStopManual, btnConnectController, btnAlarm;
-    LinearLayout linearLayoutScrollActiveZone, linearLayoutQueueZone, linearLayoutScrollManualPump, linearLayoutScrollManualZone, linearLayoutManualPage;
+    LinearLayout linearLayoutScrollActiveZone, linearLayoutQueueZone,linearLayoutSensorStatus, linearLayoutScrollManualPump, linearLayoutScrollManualZone, linearLayoutManualPage;
     MaskedEditText editTextDuration;
     TextView textView14,textView15, textView17;
     Switch switchAsyncRun;
@@ -224,10 +224,9 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         if (position == 0) {
 
             view = inflater.inflate(R.layout.activity_live_view, container, false);
-            btnEarth = view.findViewById(R.id.BtnEarth);
             linearLayoutScrollActiveZone = view.findViewById(R.id.LinearLayoutScrollActiveZone);
             linearLayoutQueueZone = view.findViewById(R.id.LinearLayoutQueueZone);
-
+            linearLayoutSensorStatus = view.findViewById(R.id.LinearLayoutSensorStatus);
             new Thread(new Runnable() { //Running on a new thread
                 public void run() { //used to ge the pumps that are in today's schedule
                     String[][] Old = new String[0][0];
@@ -253,17 +252,19 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             }).start();
 
 
+            new Thread(new Runnable() { //Running on a new thread
+                public void run() { //used to ge the pumps that are in today's schedule
+                    String[][] Old = new String[0][0];
+                    while (true) {
 
-            btnEarth.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //------------------------------------------------------------------
-                    Intent schedule = new Intent(view.getContext(),earth.class);
-                    view.getContext().startActivity(schedule);
-                    //------------------------------------------------------------------
-                    //execute Open Map
+                        Old = getNextScheudleDue(Old);
+
+                        SystemClock.sleep(8000);
+                    }
                 }
-            });
+            }).start();
+
+
         }
 
         else if (position == 1) {
@@ -761,6 +762,9 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         return ActiveSchedule;
     }
 
+
+
+
     private String[][] getSensorLiveView(String[][] OldSensorDetails) {
 
 
@@ -770,15 +774,15 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         if (OldSensorDetails.length < 1) {
             Button dialogLoadCancel;
 
-            final View v = layoutSensorStatus.inflate(R.layout.loading_screen, linearLayoutQueueZone, false);
+            final View v = layoutSensorStatus.inflate(R.layout.loading_screen, linearLayoutSensorStatus, false);
             dialogLoadCancel = v.findViewById(R.id.BtnCancel);
             dialogLoadCancel.setVisibility(View.GONE);
 
             runOnUI(new Runnable() { //used to speak to main thread
                 @Override
                 public void run() {
-                    linearLayoutQueueZone.removeAllViews();
-                    linearLayoutQueueZone.addView(v);
+                    linearLayoutSensorStatus.removeAllViews();
+                    linearLayoutSensorStatus.addView(v);
                 }
             });
         }
@@ -789,7 +793,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         runOnUI(new Runnable() { //used to speak to main thread
             @Override
             public void run() {
-                linearLayoutQueueZone.removeAllViews();
+                linearLayoutSensorStatus.removeAllViews();
             }
         });
 
@@ -798,7 +802,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         if (ActiveSensorDetails[0][0].equals("No Sensor")) {
             TextView txtNoActivity;
-            final View v = layoutSensorStatus.inflate(R.layout.activity_no_live_equipment, linearLayoutQueueZone, false);
+            final View v = layoutSensorStatus.inflate(R.layout.activity_no_live_equipment, linearLayoutSensorStatus, false);
             txtNoActivity = v.findViewById(R.id.TxtNoActivity);
             txtNoActivity.setText("No Sensors");
 
@@ -806,7 +810,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 runOnUI(new Runnable() { //used to speak to main thread
                     @Override
                     public void run() {
-                        linearLayoutQueueZone.addView(v);
+                        linearLayoutSensorStatus.addView(v);
                     }
                 });
             }
@@ -820,14 +824,14 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     TextView txtSensorName, txtPressureStatus;
                     ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
                     txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
                     txtSensorName = v.findViewById(R.id.TxtSensorName);
                     imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
 
                     txtSensorName.setText(ActiveSensorDetails[i][1]);
 
-                    if (ActiveSensorDetails[i][1].equals("0")) {
+                    if (ActiveSensorDetails[i][3].equals("0")) {
                         imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
                         txtPressureStatus.setText("Pressure: LOW");
                     } else {
@@ -837,7 +841,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            linearLayoutQueueZone.addView(v);
+                            linearLayoutSensorStatus.addView(v);
                         }
                     });
 
@@ -845,7 +849,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     TextView txtSensorName, txtPressureStatus;
                     ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
                     txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
                     txtSensorName = v.findViewById(R.id.TxtSensorName);
                     imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
@@ -858,7 +862,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            linearLayoutQueueZone.addView(v);
+                            linearLayoutSensorStatus.addView(v);
                         }
                     });
 
@@ -867,7 +871,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     TextView txtSensorName, txtPressureStatus;
                     ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
                     txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
                     txtSensorName = v.findViewById(R.id.TxtSensorName);
                     imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
@@ -884,7 +888,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            linearLayoutQueueZone.addView(v);
+                            linearLayoutSensorStatus.addView(v);
                         }
                     });
 
@@ -892,7 +896,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     TextView txtSensorName, txtPressureStatus;
                     ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
                     txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
                     txtSensorName = v.findViewById(R.id.TxtSensorName);
                     imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
@@ -909,7 +913,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            linearLayoutQueueZone.addView(v);
+                            linearLayoutSensorStatus.addView(v);
                         }
                     });
 
@@ -918,7 +922,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                     TextView txtSensorName, txtPressureStatus;
                     ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
+                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
                     txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
                     txtSensorName = v.findViewById(R.id.TxtSensorName);
                     imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
@@ -935,44 +939,61 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
-                            linearLayoutQueueZone.addView(v);
+                            linearLayoutSensorStatus.addView(v);
                         }
                     });
 
                 }
             }
         }
-        /*
-        for (int i = 0; i < ActiveSensorDetails.length; i++) {
 
-            if (OldSensorDetails.length == ActiveSensorDetails.length) { //if its not the same length, then We need to update the Layout View
-                if (OldSensorDetails[i][0].equals(ActiveSensorDetails[i][0])) {
-                    if(ActiveSensorDetails[0].length>1){
-                        if (OldSensorDetails[i][2].equals(ActiveSensorDetails[i][2])) {
-                            sameSensorEquals = true;
-                        }
-                    }else{
-                        sameSensorEquals = true;
-                    }
+        return ActiveSensorDetails;
 
-                }
-                else {
-                    sameSensorEquals = false;
-                    i = ActiveSensorDetails.length + 1; //jumps out the for loop
+
+    }
+
+
+
+    private String[][] getNextScheudleDue(String[][] OldQueue){
+
+        final LayoutInflater layoutQueueSchedule = LayoutInflater.from(this.context);//Used to inflate the schedules to the user
+        String[][] QueueSchedule = getQueuePumps();
+        Boolean QueueEquals = false;
+        for (int i = 0; i < QueueSchedule.length; i++) {
+
+            if (OldQueue.length == QueueSchedule.length) { //if its not the same length, then We need to update the Layout View
+                if (OldQueue[i][0].equals(QueueSchedule[i][0])) {
+                    QueueEquals = true;
+                } else {
+                    QueueEquals = false;
+                    i = QueueSchedule.length + 1; //jumps out the for loop
+
                 }
             }
+
 
         }
 
 
-        //Displays that there is no Active Sensors
-        if (ActiveSensorDetails[0][0].equals("No Sensor")) {
-            TextView txtNoActivity;
-            final View v = layoutSensorStatus.inflate(R.layout.activity_no_live_equipment, linearLayoutQueueZone, false);
-            txtNoActivity = v.findViewById(R.id.TxtNoActivity);
-            txtNoActivity.setText("No Sensors");
+        if (QueueEquals == false) {
+            OldQueue = QueueSchedule;
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    linearLayoutQueueZone.removeAllViews();
+                }
+            });
+        }
 
-            if (sameSensorEquals == false) {
+
+        TextView txtScheduleName, txtActiveZone, txtActivePump, txtActiveStartTime, txtActiveEndTime, txtNoActivity;
+
+        if (QueueSchedule[0][0].equals("No Data")) {
+            final View v = layoutQueueSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutQueueZone, false);
+            txtNoActivity = v.findViewById(R.id.TxtNoActivity);
+            txtNoActivity.setText("No Active Equipment Queued");
+
+            if (QueueEquals == false) {
                 runOnUI(new Runnable() { //used to speak to main thread
                     @Override
                     public void run() {
@@ -981,38 +1002,21 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 });
             }
 
-        }else {
+        } else {
+            if (QueueEquals == false) {
+                for (int i = 0; i < QueueSchedule.length; i++) {
+                    final View v = layoutQueueSchedule.inflate(R.layout.activity_live_view_equipment_status, linearLayoutQueueZone, false);
+                    txtScheduleName = v.findViewById(R.id.TxtScheduleName);
+                    txtActiveZone = v.findViewById(R.id.TxtActiveZone);
+                    txtActivePump = v.findViewById(R.id.TxtActivePump);
+                    txtActiveStartTime = v.findViewById(R.id.TxtActiveStartTime);
+                    txtActiveEndTime = v.findViewById(R.id.TxtActiveEndTime);
+                    txtScheduleName.setText("Schedule: " + QueueSchedule[i][1]);
+                    txtActivePump.setText("Pump: " + QueueSchedule[i][2]);
+                    txtActiveZone.setText("Zone: " + QueueSchedule[i][3]);
+                    txtActiveStartTime.setText("Start: " + QueueSchedule[i][4]);
+                    txtActiveEndTime.setText("End: " + QueueSchedule[i][5]);
 
-
-
-
-            if (sameSensorEquals == false) {
-                OldSensorDetails = ActiveSensorDetails;
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutQueueZone.removeAllViews();
-                    }
-                });
-            }
-            if (sameSensorEquals == false) {
-                for (int i = 0; i < ActiveSensorDetails.length; i++) {
-                    TextView txtSensorName, txtPressureStatus;
-                    ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutQueueZone, false);
-                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                    txtSensorName = v.findViewById(R.id.TxtSensorName);
-                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                    txtSensorName.setText(ActiveSensorDetails[i][1]);
-
-                    if(ActiveSensorDetails[i][2].equals("0")){
-                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
-                        txtPressureStatus.setText("Pressure: LOW");
-                    }else{
-                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_high);
-                        txtPressureStatus.setText("Pressure: HIGH");
-                    }
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
@@ -1022,88 +1026,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 }
             }
         }
-
-
-         */
-        return ActiveSensorDetails;
-
-
-    }
-
-    private void getNextScheudleDue(){
-        /*
-                            final LayoutInflater layoutQueueSchedule = LayoutInflater.from(this.context);//Used to inflate the schedules to the user
-                            String[][] QueueSchedule = getQueuePumps();
-                            Boolean QueueEquals = false;
-                            for (int i = 0; i < QueueSchedule.length; i++) {
-
-                                //for (int j=0; j < Old.length; j++){
-                                if (OldQueue.length == QueueSchedule.length) { //if its not the same length, then We need to update the Layout View
-                                    if (OldQueue[i][0].equals(QueueSchedule[i][0])) {
-                                        QueueEquals = true;
-                                    } else {
-                                        QueueEquals = false;
-                                        i = QueueSchedule.length + 1; //jumps out the for loop
-                                        //j = Old.length +1;
-                                    }
-                                }
-
-
-                            }
-
-
-                            if (QueueEquals == false) {
-                                OldQueue = QueueSchedule;
-                                runOnUI(new Runnable() { //used to speak to main thread
-                                    @Override
-                                    public void run() {
-                                        linearLayoutQueueZone.removeAllViews();
-                                    }
-                                });
-                            }
-
-
-                            //TextView txtScheduleName, txtActiveZone, txtActivePump, txtActiveStartTime, txtActiveEndTime, txtNoActivity;
-
-                            if (QueueSchedule[0][0].equals("No Data")) {
-                                final View v = layoutQueueSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutQueueZone, false);
-                                txtNoActivity = v.findViewById(R.id.TxtNoActivity);
-                                txtNoActivity.setText("No Active Equipment Queued");
-
-                                if (QueueEquals == false) {
-                                    runOnUI(new Runnable() { //used to speak to main thread
-                                        @Override
-                                        public void run() {
-                                            linearLayoutQueueZone.addView(v);
-                                        }
-                                    });
-                                }
-
-                            } else {
-                                if (QueueEquals == false) {
-                                    for (int i = 0; i < QueueSchedule.length; i++) {
-                                        final View v = layoutQueueSchedule.inflate(R.layout.activity_live_view_equipment_status, linearLayoutQueueZone, false);
-                                        txtScheduleName = v.findViewById(R.id.TxtScheduleName);
-                                        txtActiveZone = v.findViewById(R.id.TxtActiveZone);
-                                        txtActivePump = v.findViewById(R.id.TxtActivePump);
-                                        txtActiveStartTime = v.findViewById(R.id.TxtActiveStartTime);
-                                        txtActiveEndTime = v.findViewById(R.id.TxtActiveEndTime);
-                                        txtScheduleName.setText("Schedule: " + QueueSchedule[i][1]);
-                                        txtActivePump.setText("Pump: " + QueueSchedule[i][2]);
-                                        txtActiveZone.setText("Zone: " + QueueSchedule[i][3]);
-                                        txtActiveStartTime.setText("Start: " + QueueSchedule[i][4]);
-                                        txtActiveEndTime.setText("End: " + QueueSchedule[i][5]);
-
-                                        runOnUI(new Runnable() { //used to speak to main thread
-                                            @Override
-                                            public void run() {
-                                                linearLayoutQueueZone.addView(v);
-                                            }
-                                        });
-                                    }
-                                }
-                            }
-                            */
+        return QueueSchedule;
     }
 
     private String getManualPagePumpsZones(int OLDPumpCount, int OLDZoneCount){

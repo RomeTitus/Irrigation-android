@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,8 @@ LinearLayout linearLayoutPumps, linearLayoutValves, linearLayoutAddPump, linearL
 String SocketData;
 RadioButton radioValve, radioPump, radioSensor;
 TextView txtEquipmentName, txtLocation, txtGPIO, txtGPIODirectOnline;
-ScrollView scrollViewAddSensorValve;
+
+NestedScrollView scrollViewAddSensorValve;
 Spinner spinnerSensor;
 boolean editEquipment = false;
 String EquipmentID;
@@ -1383,7 +1385,7 @@ String getPumpsForInfo, getZonesForInfo;
 
                                     btnPump.setText(buttonInfo[1]);
                                     btnPump.setOnClickListener(AddPump_Valve.this);
-                                    v.setId(i);
+                                    //v.setId(i);
                                     if ((i + 1) < differentButtons.length) {
                                         i++;
                                         String[] buttonInfo2 = differentButtons[i].split(","); //stores the information for the second Zone
@@ -1474,7 +1476,7 @@ String getPumpsForInfo, getZonesForInfo;
                                     btnValve3.setBackgroundResource(android.R.drawable.btn_default);
                                     btnValve2.setVisibility(View.GONE);
                                     btnValve3.setVisibility(View.GONE);
-                                    v.setId(i);
+                                    //v.setId(i);
 
                                     btnValve.setId(Integer.parseInt(buttonInfo[0]));
                                     btnValve.setText(buttonInfo[1]);
@@ -1601,7 +1603,7 @@ String getPumpsForInfo, getZonesForInfo;
 
                             btnPump.setText(buttonInfo[1]);
                             btnPump.setOnClickListener(AddPump_Valve.this);
-                            v.setId(i);
+                            //v.setId(i);
                             if ((i + 1) < differentButtons.length) {
                                 i++;
                                 String[] buttonInfo2 = differentButtons[i].split(","); //stores the information for the second Zone
@@ -1700,7 +1702,7 @@ String getPumpsForInfo, getZonesForInfo;
                             btnValve3.setBackgroundResource(android.R.drawable.btn_default);
                             btnValve2.setVisibility(View.GONE);
                             btnValve3.setVisibility(View.GONE);
-                            v.setId(i);
+                            //v.setId(i);
 
                             btnValve.setId(Integer.parseInt(buttonInfo[0]));
 

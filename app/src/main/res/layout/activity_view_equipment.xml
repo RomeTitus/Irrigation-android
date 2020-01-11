@@ -71,185 +71,200 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.28"
-            android:gravity="top"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/TxtEquipmentName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="Name"
-                android:textColor="#FFFFFF" />
-
-            <EditText
-                android:id="@+id/EditTextName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/textView21"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Where is the Sensor"
-                android:textColor="#FFFFFF" />
-
-            <ScrollView
-                android:id="@+id/ScrollViewAddSensorValve"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="0"
-                android:background="@drawable/layout_curve">
-
-                <LinearLayout
-                    android:id="@+id/LinearLayoutSlaves"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
+            android:layout_weight="1">
 
             <LinearLayout
-                android:id="@+id/LinearLayoutSensorType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView26"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Sensor Type:"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
-
-                <Spinner
-                    android:id="@+id/SpinnerSensor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/layout_curve"
-                    android:scrollbarSize="4dp"
-                    android:spinnerMode="dropdown" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/TxtGPIO"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Pin Where Zone Wires go"
-                android:textColor="#FFFFFF" />
-
-            <EditText
-                android:id="@+id/EditTextGPIO"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#FFFFFF" />
-
-            <CheckBox
-                android:id="@+id/CheckBoxVSD"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Is it an Direct Online?"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/txtGPIODirectOnline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="DirectOnline Power Off"
-                android:textColor="#FFFFFF" />
-
-            <EditText
-                android:id="@+id/EditTextGPIOVXD"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:ems="10"
-                android:inputType="number"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#FFFFFF" />
-
-            <LinearLayout
-                android:id="@+id/LinearLayoutPumpZone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="14"
-                android:gravity="center"
-                android:orientation="vertical"
-                tools:visibility="visible">
+                android:gravity="fill"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView27"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="0"
-                    android:text="Pump"
-                    android:textColor="#FFFFFF" />
+                    android:gravity="top"
+                    android:orientation="vertical">
 
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="15"
-                    android:background="@drawable/layout_curve">
+                    <TextView
+                        android:id="@+id/TxtEquipmentName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:text="Name"
+                        android:textColor="#FFFFFF" />
 
-                    <LinearLayout
-                        android:id="@+id/LinearLayoutScrollManualPump"
+                    <EditText
+                        android:id="@+id/EditTextName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </ScrollView>
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#FFFFFF" />
 
-                <TextView
-                    android:id="@+id/textView28"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    android:text="Zone"
-                    android:textColor="#FFFFFF" />
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="25"
-                    android:background="@drawable/layout_curve">
-
-                    <LinearLayout
-                        android:id="@+id/LinearLayoutScrollManualZone"
+                    <TextView
+                        android:id="@+id/textView21"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </ScrollView>
+                        android:text="Where is the Sensor"
+                        android:textColor="#FFFFFF" />
+
+                    <androidx.core.widget.NestedScrollView
+                        android:id="@+id/ScrollViewAddSensorValve"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="20"
+                        android:background="@drawable/layout_curve">
+
+                        <LinearLayout
+                            android:id="@+id/LinearLayoutSlaves"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical" />
+                    </androidx.core.widget.NestedScrollView>
+
+                    <LinearLayout
+                        android:id="@+id/LinearLayoutSensorType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView26"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Sensor Type:"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp" />
+
+                        <Spinner
+                            android:id="@+id/SpinnerSensor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/layout_curve"
+                            android:scrollbarSize="4dp"
+                            android:spinnerMode="dropdown" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/TxtGPIO"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pin Where Zone Wires go"
+                        android:textColor="#FFFFFF" />
+
+                    <EditText
+                        android:id="@+id/EditTextGPIO"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#FFFFFF" />
+
+                    <CheckBox
+                        android:id="@+id/CheckBoxVSD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Is it an Direct Online?"
+                        android:textColor="#FFFFFF" />
+
+                    <TextView
+                        android:id="@+id/txtGPIODirectOnline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:text="DirectOnline Power Off"
+                        android:textColor="#FFFFFF" />
+
+                    <EditText
+                        android:id="@+id/EditTextGPIOVXD"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#FFFFFF" />
+
+                    <LinearLayout
+                        android:id="@+id/LinearLayoutPumpZone"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="14"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/textView27"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:text="Pump"
+                            android:textColor="#FFFFFF" />
+
+                        <androidx.core.widget.NestedScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="15"
+                            android:background="@drawable/layout_curve">
+
+                            <LinearLayout
+                                android:id="@+id/LinearLayoutScrollManualPump"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical" />
+                        </androidx.core.widget.NestedScrollView>
+
+                        <TextView
+                            android:id="@+id/textView28"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:text="Zone"
+                            android:textColor="#FFFFFF" />
+
+                        <androidx.core.widget.NestedScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="240dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="25"
+                            android:background="@drawable/layout_curve">
+
+                            <LinearLayout
+                                android:id="@+id/LinearLayoutScrollManualZone"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical" />
+                        </androidx.core.widget.NestedScrollView>
+                    </LinearLayout>
+
+                </LinearLayout>
+
             </LinearLayout>
-
-        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:fillViewport="true"
             android:gravity="bottom"
             android:orientation="vertical">
