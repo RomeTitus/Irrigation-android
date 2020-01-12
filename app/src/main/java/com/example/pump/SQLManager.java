@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLManager extends SQLiteOpenHelper {
     private static final String DatabaseName = "PumpController";
-    private static final int DatabaseVersion = 5;
+    private static final int DatabaseVersion = 6;
 
     public SQLManager(Context context) {
         super(context, DatabaseName, null, DatabaseVersion);

@@ -1139,7 +1139,7 @@ String getPumpsForInfo, getZonesForInfo;
         switch (v.getId()){
             case R.id.RadioPump:
                 checkBoxDirectOnline.setVisibility(View.VISIBLE);
-                txtGPIODirectOnline.setText("DirectOnline Power Off");
+                txtGPIODirectOnline.setText("Direct Drive Power Off");
                 //txtGPIODirectOnline.setVisibility(View.VISIBLE);
                 showEquipmentLayout();
                 break;

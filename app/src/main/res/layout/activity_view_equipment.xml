@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Select What Your Adding"
+            android:text="Select What You're Adding"
             android:textColor="#FFFFFF"
             android:textSize="24sp" />
 
@@ -162,7 +162,7 @@
                         android:id="@+id/TxtGPIO"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Pin Where Zone Wires go"
+                        android:text="Pin Where Zone Wires Go"
                         android:textColor="#FFFFFF" />
 
                     <EditText
@@ -179,7 +179,7 @@
                         android:id="@+id/CheckBoxVSD"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Is it an Direct Online?"
+                        android:text="Is it a Direct Drive?"
                         android:textColor="#FFFFFF" />
 
                     <TextView
@@ -187,7 +187,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:text="DirectOnline Power Off"
+                        android:text="Direct Drive Power Off"
                         android:textColor="#FFFFFF" />
 
                     <EditText
