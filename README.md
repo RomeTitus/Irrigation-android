@@ -13,5 +13,8 @@ This image depicts the schedule page where users are able to view all their sche
 This image will appear if the user selects "view/edit equipment". It displays all the pumps, zones and equipment to the user. When one is selected, a detailed description of the item is presented to the user as well as the option to edit or delete the item. If the user edits or deletes the item, the 'master' will communicate this to the 'slave' in order to make sure that the action is performed.
 ![Equipment](ReadMeImages/Equipment.png)
 
-
+If the user selects "add equipment", this screen will appear. There are three categories of equipment a user can add, namely valve, pump, and sensor. The user must enter a name, what system the equipment will be on, and what pin on the system it will be using (pin 1 - 24). If LoRa is attached, only pins 1 to 14 will be available. If the user adds a pump, an extra option is available, namely Direct Online, which the user will select if the pump supports it (see second image). If a sensor is added, the sensor type must be specified and, where applicable, the pump and/or zone must also be specified.
 ![Equipment Add](ReadMeImages/Equipment%20Add.png)
+
+If the user selects "view/edit alarm" from the settings screen, the current security schedules will appear to the user (see image on the left). The user will also be able to turn these schedules on and off from this screen. When a security schedule is selected, a detailed description of the schedule is displayed as well as the option to edit or delete it (see second image). When a security schedule is added, the user must enter the alarm schedule's name, starting time and ending time, as well as the sensors it will be using (see image on the right).
+![Alarm](ReadMeImages/Alarm.png)
