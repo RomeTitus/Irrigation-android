@@ -98,6 +98,8 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
             @Override
             public void onClick(View v) {
                 finish();
+                Intent schedule = new Intent(Schedule.this,Schedule.class);
+                Schedule.this.startActivity(schedule);
             }
         });
 
