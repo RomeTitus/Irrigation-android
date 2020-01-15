@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Zone Name"
-            android:textSize="24sp" />
+            android:textSize="18sp" />
 
         <com.vicmikhailau.maskededittext.MaskedEditText
             android:id="@+id/EditTextManualDuration"
@@ -28,20 +28,13 @@
             android:layout_marginRight="50dp"
             android:hint="H:MM"
             android:inputType="phone"
-            android:textSize="24sp"
+            android:textSize="18sp"
             app:mask="#:##" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_weight="0"
         android:background="@android:color/darker_gray" />
 
