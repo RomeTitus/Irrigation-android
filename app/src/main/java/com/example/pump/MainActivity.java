@@ -1,6 +1,7 @@
 package com.example.pump;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void sendApiKey() {
+
         final String  androidID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         new Thread(new Runnable() { //Running on a new thread

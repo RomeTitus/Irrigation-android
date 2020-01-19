@@ -12,15 +12,18 @@ public class NotificationActions extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         String message = intent.getStringExtra("Ngrok");
+        String Mac = intent.getStringExtra("Bluetooth");
         if(message!= null){
             SQLManager database = new SQLManager(context);
            //tcp://0.tcp.eu.ngrok.io:16829
             String port = message.substring(24);
             port = port.replace("\n", "");
-            database.updateExternalPath("0.tcp.eu.ngrok.io",port);
+
+            database.updateExternalPathWithMac("0.tcp.eu.ngrok.io",port, Mac);
+
             Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
             if(intent.getStringExtra("UpdateNgrokAndOpen") != null && intent.getStringExtra("UpdateNgrokAndOpen").equals("1")){
-                Intent activityIntent = new Intent(context, Add_Controller.class);
+                Intent activityIntent = new Intent(context, select_controller.class);
                 context.startActivity(activityIntent);
             }
         }

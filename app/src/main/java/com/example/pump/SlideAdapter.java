@@ -1,5 +1,6 @@
 package com.example.pump;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +9,6 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -83,12 +83,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         try{
             processData = socketController.execute().get();
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    listener.onObjectReady(socketController.getPingTime());
-                }
-            });
+
 
         }catch (ExecutionException e){
 
@@ -102,12 +97,40 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             NoActive[0][0] = "No Data";
             return NoActive;
         }
-        String[] splitData = processData.split("#");
-        String [][] ActiveEquipment = new String[splitData.length][6];//we are returnig this
+
+        String[] splitDatawithManual = processData.split("$");
+        String[] splitData = new String[0];
+        String ManualData = "";
+        //If both are running
+        if(splitDatawithManual.length>1){
+            splitData = splitDatawithManual[1].split("#");
+            ManualData = splitDatawithManual[0];
+        }else{
+
+            if(splitDatawithManual[0].contains(",")){
+                splitData = splitDatawithManual[0].split("#");
+            }else{
+                ManualData = splitDatawithManual[0];
+            }
+        }
+        String [][] ActiveEquipment;
+
+        if(!ManualData.equals("")){
+            ActiveEquipment = new String[splitData.length+1][6];//we are returnig this
+        }else{
+            ActiveEquipment = new String[splitData.length][6];//we are returnig this
+        }
+
 
 
         int j = 0;
+        if(!ManualData.equals("")){
+            ActiveEquipment[j][0] = ManualData;
+            j=j+1;
+        }
+
             for (int i = 0; i < splitData.length; i++) {
+
 
                 try {
                     String[] DataRow = splitData[i].split(",");
@@ -158,10 +181,15 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         for (int i = 0; i < splitData.length; i++) {
             String[] DataRow = splitData[i].split(",");
-            ActiveSensor[i][0] = DataRow[0];
-            ActiveSensor[i][1] = DataRow[1];
-            ActiveSensor[i][2] = DataRow[2];
-            ActiveSensor[i][3] = DataRow[3];
+            try{
+                ActiveSensor[i][0] = DataRow[0];
+                ActiveSensor[i][1] = DataRow[1];
+                ActiveSensor[i][2] = DataRow[2];
+                ActiveSensor[i][3] = DataRow[3];
+            }catch (Exception e){
+
+            }
+
         }
         return ActiveSensor;
     }
@@ -386,8 +414,9 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 @Override
                 public void onClick(View v) {
                     //------------------------------------------------------------------
-                    Intent add_controller = new Intent(view.getContext(),Add_Controller.class);
+                    Intent add_controller = new Intent(view.getContext(), select_controller.class);
                     view.getContext().startActivity(add_controller);
+                    ((Activity)context).finish();
                     //------------------------------------------------------------------
                 }
             });
@@ -601,6 +630,8 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         }
 
         String[][] ActiveSchedule = getActivePumps();
+
+
         Boolean equals = false;
         for (int i = 0; i < ActiveSchedule.length; i++) {
 
@@ -623,42 +654,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
 
 
-
-        TextView txtScheduleName, txtActiveZone, txtActivePump, txtActiveStartTime, txtActiveEndTime, txtNoActivity;
-
-
-        final SocketController socketControllerManual = new SocketController(context, "getManualSchedule");
-
-        String processData = "";
-
-        try {
-            processData = socketControllerManual.execute().get();
-
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    listener.onObjectReady(socketControllerManual.getPingTime());
-                }
-            });
-
-
-        } catch (ExecutionException e) {
-
-        } catch (InterruptedException i) {
-
-        }
-
-        if (equals == false) {
-            Old = ActiveSchedule;
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    linearLayoutScrollActiveZone.removeAllViews();
-                }
-            });
-        }
-
-        if (!processData.equals("Data Empty") && !processData.equals("Server Not Running")) {
+        if(equals == false){
 
             runOnUI(new Runnable() { //used to speak to main thread
                 @Override
@@ -667,89 +663,13 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 }
             });
 
-            final View v = layoutInflaterActiveSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutScrollActiveZone, false);
-            txtNoActivity = v.findViewById(R.id.TxtNoActivity);
-            txtNoActivity.setText("MANUAL SCHEDULE RUNNING");
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    linearLayoutScrollActiveZone.addView(v);
-                }
-            });
+            TextView txtScheduleName, txtActiveZone, txtActivePump, txtActiveStartTime, txtActiveEndTime, txtNoActivity;
+            if(ActiveSchedule[0][0].equals("No Data")){
+                final View v = layoutInflaterActiveSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutScrollActiveZone, false);
+                txtNoActivity = v.findViewById(R.id.TxtNoActivity);
+                txtNoActivity.setText("No Active Equipment Running");
 
-            String[] equipmentOn = processData.split("#");
-
-            String[] dataTime = equipmentOn[0].split(",");
-            String durationTime = dataTime[1];
-
-
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            Date date = new Date();
-
-            String time1 = dateFormat.format(date);
-            String time2 = durationTime;
-
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-            String Time = "";
-            try {
-
-                String[] arrayTime1 = time1.split(":");
-                String[] arrayTime2 = time2.split(":");
-                int minute = Integer.parseInt(arrayTime2[1]) - Integer.parseInt(arrayTime1[1]);
-                int hour = Integer.parseInt(arrayTime2[0]) - Integer.parseInt(arrayTime1[0]);
-                if (minute < 0 && hour > 0) {
-                    hour--;
-                    minute = minute + 60;
-
-                }
-                if (minute < 10) {
-                    Time = hour + ":0" + minute;
-                } else {
-                    Time = hour + ":" + minute;
-                }
-
-            } catch (Exception e) {
-
-            }
-
-            final View v1 = layoutInflaterActiveSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutScrollActiveZone, false);
-            txtNoActivity = v1.findViewById(R.id.TxtNoActivity);
-            txtNoActivity.setText("ENDS ON: " + Time);
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    linearLayoutScrollActiveZone.addView(v1);
-                }
-            });
-        } else if (ActiveSchedule[0][0].equals("No Data")) {
-            final View v = layoutInflaterActiveSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutScrollActiveZone, false);
-            txtNoActivity = v.findViewById(R.id.TxtNoActivity);
-            txtNoActivity.setText("No Active Equipment Running");
-
-            if (equals == false) {
-                runOnUI(new Runnable() { //used to speak to main thread
-                    @Override
-                    public void run() {
-                        linearLayoutScrollActiveZone.addView(v);
-                    }
-                });
-            }
-
-        } else {
-            if (equals == false) {
-                for (int i = 0; i < ActiveSchedule.length; i++) {
-                    final View v = layoutInflaterActiveSchedule.inflate(R.layout.activity_live_view_equipment_status, linearLayoutScrollActiveZone, false);
-                    txtScheduleName = v.findViewById(R.id.TxtScheduleName);
-                    txtActiveZone = v.findViewById(R.id.TxtActiveZone);
-                    txtActivePump = v.findViewById(R.id.TxtActivePump);
-                    txtActiveStartTime = v.findViewById(R.id.TxtActiveStartTime);
-                    txtActiveEndTime = v.findViewById(R.id.TxtActiveEndTime);
-                    txtScheduleName.setText("Schedule: " + ActiveSchedule[i][1]);
-                    txtActivePump.setText("Pump: " + ActiveSchedule[i][2]);
-                    txtActiveZone.setText("Zone: " + ActiveSchedule[i][3]);
-                    txtActiveStartTime.setText("Start: " + ActiveSchedule[i][4]);
-                    txtActiveEndTime.setText("End: " + ActiveSchedule[i][5]);
-
+                if (equals == false) {
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
@@ -757,8 +677,113 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                         }
                     });
                 }
+            }else{
+                try{
+
+                    if(ActiveSchedule[0][1] ==null){
+
+
+                        final View v = layoutInflaterActiveSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutScrollActiveZone, false);
+                        txtNoActivity = v.findViewById(R.id.TxtNoActivity);
+                        if(ActiveSchedule.length>1) {
+                            txtNoActivity.setText("MANUAL SCHEDULE RUNNING WITH SCHEDULE");
+                        }else {
+                            txtNoActivity.setText("MANUAL SCHEDULE RUNNING WITHOUT SCHEDULE");
+                        }
+
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutScrollActiveZone.addView(v);
+                            }
+                        });
+
+                        String durationTime = ActiveSchedule[0][0];
+                        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                        Date date = new Date();
+
+                        String time1 = dateFormat.format(date);
+                        String time2 = durationTime;
+
+                        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                        String Time = "";
+
+                        try {
+
+                            String[] arrayTime1 = time1.split(":");
+                            String[] arrayTime2 = time2.split(":");
+                            int minute = Integer.parseInt(arrayTime2[1]) - Integer.parseInt(arrayTime1[1]);
+                            int hour = Integer.parseInt(arrayTime2[0]) - Integer.parseInt(arrayTime1[0]);
+                            if (minute < 0 && hour > 0) {
+                                hour--;
+                                minute = minute + 60;
+
+                            }
+                            if (minute < 10) {
+                                Time = hour + ":0" + minute;
+                            } else {
+                                Time = hour + ":" + minute;
+                            }
+
+                        } catch (Exception e) {
+
+                        }
+
+
+                        final View v1 = layoutInflaterActiveSchedule.inflate(R.layout.activity_no_live_equipment, linearLayoutScrollActiveZone, false);
+                        txtNoActivity = v1.findViewById(R.id.TxtNoActivity);
+                        txtNoActivity.setText("ENDS ON: " + Time);
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutScrollActiveZone.addView(v1);
+                            }
+                        });
+                    }
+
+
+
+
+                }catch (Exception e){
+
+                }
+                if (equals == false) {
+                    for (int i = 0; i < ActiveSchedule.length; i++) {
+                        if(ActiveSchedule[i][1] !=null){
+                            final View v = layoutInflaterActiveSchedule.inflate(R.layout.activity_live_view_equipment_status, linearLayoutScrollActiveZone, false);
+                            txtScheduleName = v.findViewById(R.id.TxtScheduleName);
+                            txtActiveZone = v.findViewById(R.id.TxtActiveZone);
+                            txtActivePump = v.findViewById(R.id.TxtActivePump);
+                            txtActiveStartTime = v.findViewById(R.id.TxtActiveStartTime);
+                            txtActiveEndTime = v.findViewById(R.id.TxtActiveEndTime);
+                            txtScheduleName.setText("Schedule: " + ActiveSchedule[i][1]);
+                            txtActivePump.setText("Pump: " + ActiveSchedule[i][2]);
+                            txtActiveZone.setText("Zone: " + ActiveSchedule[i][3]);
+                            txtActiveStartTime.setText("Start: " + ActiveSchedule[i][4]);
+                            txtActiveEndTime.setText("End: " + ActiveSchedule[i][5]);
+
+                            runOnUI(new Runnable() { //used to speak to main thread
+                                @Override
+                                public void run() {
+                                    linearLayoutScrollActiveZone.addView(v);
+                                }
+                            });
+                        }
+
+                    }
+                }
+
             }
         }
+
+
+
+
+
+
+
+
+
         return ActiveSchedule;
     }
 
@@ -820,130 +845,135 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
             for (int i = 0; i < ActiveSensorDetails.length; i++) {
 
-                if (ActiveSensorDetails[i][1].equals("Pressure Sensor")) {
+                try {
+                    if (ActiveSensorDetails[i][1].equals("Pressure Sensor")) {
 
-                    TextView txtSensorName, txtPressureStatus;
-                    ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
-                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                    txtSensorName = v.findViewById(R.id.TxtSensorName);
-                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+                        TextView txtSensorName, txtPressureStatus;
+                        ImageView imageSesnorStatus;
+                        final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
+                        txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                        txtSensorName = v.findViewById(R.id.TxtSensorName);
+                        imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
 
-                    txtSensorName.setText(ActiveSensorDetails[i][1]);
+                        txtSensorName.setText(ActiveSensorDetails[i][1]);
 
-                    if (ActiveSensorDetails[i][3].equals("0")) {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
-                        txtPressureStatus.setText("Pressure: LOW");
-                    } else {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.pressure_high);
-                        txtPressureStatus.setText("Pressure: HIGH");
+                        if (ActiveSensorDetails[i][3].equals("0")) {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
+                            txtPressureStatus.setText("Pressure: LOW");
+                        } else {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.pressure_high);
+                            txtPressureStatus.setText("Pressure: HIGH");
+                        }
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutSensorStatus.addView(v);
+                            }
+                        });
+
+                    } else if (ActiveSensorDetails[i][1].equals("Echo Sensor")) {
+
+                        TextView txtSensorName, txtPressureStatus;
+                        ImageView imageSesnorStatus;
+                        final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
+                        txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                        txtSensorName = v.findViewById(R.id.TxtSensorName);
+                        imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                        txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                        imageSesnorStatus.setBackgroundResource(R.drawable.echo_sensor_img);
+                        txtPressureStatus.setText(ActiveSensorDetails[i][3] + " CM");
+
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutSensorStatus.addView(v);
+                            }
+                        });
+
+                    } else if (ActiveSensorDetails[i][1].equals("Mini Infrared PIR")) {
+
+
+                        TextView txtSensorName, txtPressureStatus;
+                        ImageView imageSesnorStatus;
+                        final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
+                        txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                        txtSensorName = v.findViewById(R.id.TxtSensorName);
+                        imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                        txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                        if (ActiveSensorDetails[i][3].equals("0")) {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.pir_low_img);
+                            txtPressureStatus.setText("Nothing detected");
+                        } else {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.pir_high_img);
+                            txtPressureStatus.setText("PIR has been set off");
+                        }
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutSensorStatus.addView(v);
+                            }
+                        });
+
+                    } else if (ActiveSensorDetails[i][1].equals("Vibration Sensor")) {
+
+                        TextView txtSensorName, txtPressureStatus;
+                        ImageView imageSesnorStatus;
+                        final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
+                        txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                        txtSensorName = v.findViewById(R.id.TxtSensorName);
+                        imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                        txtSensorName.setText(ActiveSensorDetails[i][2]);
+
+                        if (ActiveSensorDetails[i][3].equals("1")) {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.vibration_low_img);
+                            txtPressureStatus.setText("No Vibrations");
+                        } else {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.vibration_high_img);
+                            txtPressureStatus.setText("Vibrations Detected!");
+                        }
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutSensorStatus.addView(v);
+                            }
+                        });
+
+                    } else if (ActiveSensorDetails[i][1].equals("Sound Detection Sensor")) {
+
+
+                        TextView txtSensorName, txtPressureStatus;
+                        ImageView imageSesnorStatus;
+                        final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
+                        txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
+                        txtSensorName = v.findViewById(R.id.TxtSensorName);
+                        imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
+
+                        txtSensorName.setText(ActiveSensorDetails[i][1]);
+
+                        if (ActiveSensorDetails[i][3].equals("0")) {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.mic_low_img);
+                            txtPressureStatus.setText("No Sound");
+                        } else {
+                            imageSesnorStatus.setBackgroundResource(R.drawable.mic_high_img);
+                            txtPressureStatus.setText("Sound Detected!");
+                        }
+                        runOnUI(new Runnable() { //used to speak to main thread
+                            @Override
+                            public void run() {
+                                linearLayoutSensorStatus.addView(v);
+                            }
+                        });
+
                     }
-                    runOnUI(new Runnable() { //used to speak to main thread
-                        @Override
-                        public void run() {
-                            linearLayoutSensorStatus.addView(v);
-                        }
-                    });
-
-                } else if (ActiveSensorDetails[i][1].equals("Echo Sensor")) {
-
-                    TextView txtSensorName, txtPressureStatus;
-                    ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
-                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                    txtSensorName = v.findViewById(R.id.TxtSensorName);
-                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                    txtSensorName.setText(ActiveSensorDetails[i][2]);
-
-                    imageSesnorStatus.setBackgroundResource(R.drawable.echo_sensor_img);
-                    txtPressureStatus.setText(ActiveSensorDetails[i][3] + " CM");
-
-                    runOnUI(new Runnable() { //used to speak to main thread
-                        @Override
-                        public void run() {
-                            linearLayoutSensorStatus.addView(v);
-                        }
-                    });
-
-                } else if (ActiveSensorDetails[i][1].equals("Mini Infrared PIR")) {
-
-
-                    TextView txtSensorName, txtPressureStatus;
-                    ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
-                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                    txtSensorName = v.findViewById(R.id.TxtSensorName);
-                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                    txtSensorName.setText(ActiveSensorDetails[i][2]);
-
-                    if (ActiveSensorDetails[i][3].equals("0")) {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.pir_low_img);
-                        txtPressureStatus.setText("Nothing detected");
-                    } else {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.pir_high_img);
-                        txtPressureStatus.setText("PIR has been set off");
-                    }
-                    runOnUI(new Runnable() { //used to speak to main thread
-                        @Override
-                        public void run() {
-                            linearLayoutSensorStatus.addView(v);
-                        }
-                    });
-
-                } else if (ActiveSensorDetails[i][1].equals("Vibration Sensor")) {
-
-                    TextView txtSensorName, txtPressureStatus;
-                    ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
-                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                    txtSensorName = v.findViewById(R.id.TxtSensorName);
-                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                    txtSensorName.setText(ActiveSensorDetails[i][2]);
-
-                    if (ActiveSensorDetails[i][3].equals("1")) {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.vibration_low_img);
-                        txtPressureStatus.setText("No Vibrations");
-                    } else {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.vibration_high_img);
-                        txtPressureStatus.setText("Vibrations Detected!");
-                    }
-                    runOnUI(new Runnable() { //used to speak to main thread
-                        @Override
-                        public void run() {
-                            linearLayoutSensorStatus.addView(v);
-                        }
-                    });
-
-                } else if (ActiveSensorDetails[i][1].equals("Sound Detection Sensor")) {
-
-
-                    TextView txtSensorName, txtPressureStatus;
-                    ImageView imageSesnorStatus;
-                    final View v = layoutSensorStatus.inflate(R.layout.fragment_pressure_display, linearLayoutSensorStatus, false);
-                    txtPressureStatus = v.findViewById(R.id.TxtPressureStatus);
-                    txtSensorName = v.findViewById(R.id.TxtSensorName);
-                    imageSesnorStatus = v.findViewById(R.id.ImageSesnorStatus);
-
-                    txtSensorName.setText(ActiveSensorDetails[i][1]);
-
-                    if (ActiveSensorDetails[i][3].equals("0")) {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.mic_low_img);
-                        txtPressureStatus.setText("No Sound");
-                    } else {
-                        imageSesnorStatus.setBackgroundResource(R.drawable.mic_high_img);
-                        txtPressureStatus.setText("Sound Detected!");
-                    }
-                    runOnUI(new Runnable() { //used to speak to main thread
-                        @Override
-                        public void run() {
-                            linearLayoutSensorStatus.addView(v);
-                        }
-                    });
+                }catch (Exception E){
 
                 }
+
             }
         }
 
@@ -1587,12 +1617,6 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         try {
             processData = socketControllerManual.execute().get();
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    listener.onObjectReady(socketControllerManual.getPingTime());
-                }
-            });
 
         } catch (ExecutionException e) {
 
@@ -1603,15 +1627,20 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         if (processData.equals("Data Empty")|| processData.equals("Server Not Running")) {
             manualSchedule = false;
         } else {
-
             manualSchedule = true;
-            String[] equipmentOn = processData.split("#");
-            for (int i = 0; i < equipmentOn.length; i++) {
-                String[] data = equipmentOn[i].split(",");
-                RunningselectedEquipment.add(Integer.parseInt(data[0]));
+            try{
+
+                String[] equipmentOn = processData.split("#");
+                for (int i = 0; i < equipmentOn.length; i++) {
+                    String[] data = equipmentOn[i].split(",");
+                    RunningselectedEquipment.add(Integer.parseInt(data[0]));
+                }
+                String[] dataTime = equipmentOn[0].split(",");
+                durationTime = dataTime[1];
+            }catch (Exception e){
+
             }
-            String[] dataTime = equipmentOn[0].split(",");
-            durationTime = dataTime[1];
+
 
         }
 

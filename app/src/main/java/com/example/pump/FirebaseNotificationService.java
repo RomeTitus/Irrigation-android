@@ -49,8 +49,8 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             Map<String, String> remoteData  = remoteMessage.getData();
-            if(remoteData.get("Ngrok") !=null){
-                updateNgrokNotifications(remoteData.get("Ngrok"));
+            if(remoteData.get("Ngrok") !=null && remoteData.get("Bluetooth") !=null){
+                updateNgrokNotifications(remoteData.get("Ngrok"), remoteData.get("Bluetooth"));
             }else if(remoteData.get("Alarm") !=null){
                 AlarmNotify(remoteData.get("Alarm"));
                 //updateNgrokNotifications(remoteData.get("Ngrok"));
@@ -81,23 +81,26 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         // message, here is where that should be initiated. See sendNotification method below.
     }
 
-    public void updateNgrokNotifications(String externalConnection){
+    public void updateNgrokNotifications(String externalConnection, String Mac){
     notificationManager = NotificationManagerCompat.from(context);
-
+    SQLManager sqlManager = new SQLManager(context);
+        String name = sqlManager.getControllerNameByMac(Mac);
         Intent UpdateConnectionAndOpen = new Intent(this, NotificationActions.class);
         UpdateConnectionAndOpen.putExtra("UpdateNgrokAndOpen", "1");
         UpdateConnectionAndOpen.putExtra("notificationId", "1");
         UpdateConnectionAndOpen.putExtra("Ngrok", externalConnection);
+        UpdateConnectionAndOpen.putExtra("Bluetooth", Mac);
         PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, UpdateConnectionAndOpen, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent broadcastIntent = new Intent(this, NotificationActions.class);
         broadcastIntent.putExtra("notificationId", "1");
         broadcastIntent.putExtra("Ngrok", externalConnection);
+        broadcastIntent.putExtra("Bluetooth", Mac);
         PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_cloud)
-                .setContentTitle("Ngrok Connection Update")
+                .setContentTitle(name + ": Ngrok Connection Update")
                 .setContentText("New Connection: " + externalConnection)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)

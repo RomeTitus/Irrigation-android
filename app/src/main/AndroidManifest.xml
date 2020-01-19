@@ -12,7 +12,6 @@
         android:largeScreens="true"
         android:normalScreens="true"
         android:smallScreens="true"
-
         android:xlargeScreens="true" />
 
     <application
@@ -23,9 +22,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Security_Layout"></activity>
+        <activity android:name=".AddPiController"></activity>
+        <activity android:name=".Security_Layout" />
 
-        <receiver android:name=".NotificationActions"></receiver>
+        <receiver android:name=".NotificationActions" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -51,7 +51,7 @@
             android:name=".SlaveController"
             android:label="@string/title_activity_slave_controller"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Add_Controller" />
+        <activity android:name=".select_controller" />
         <activity android:name=".earth" />
         <activity android:name=".Schedule" />
         <activity android:name=".AddPump_Valve" />
