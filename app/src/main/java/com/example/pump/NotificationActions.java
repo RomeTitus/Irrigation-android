@@ -22,9 +22,15 @@ public class NotificationActions extends BroadcastReceiver {
             database.updateExternalPathWithMac("0.tcp.eu.ngrok.io",port, Mac);
 
             Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+
             if(intent.getStringExtra("UpdateNgrokAndOpen") != null && intent.getStringExtra("UpdateNgrokAndOpen").equals("1")){
+                if(intent.getStringExtra("notificationId") != null){
+
+                    database.setSelectedController(intent.getStringExtra("notificationId"));
+                }
                 Intent activityIntent = new Intent(context, select_controller.class);
                 context.startActivity(activityIntent);
+
             }
         }
         String ID = intent.getStringExtra("notificationId");

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -359,7 +360,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 SocketData = v.getId() +"$getScheduleInfo";
                 SocketController socketController = new SocketController(Schedule.this,SocketData);
                 try{
-                    final String processData = socketController.execute().get();
+                    final String processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                     runOnUI(new Runnable() { //used to speak to main thread
                         @Override
                         public void run() {
@@ -549,7 +550,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 SocketController socketController = new SocketController(Schedule.this,SocketData);
 
                 try{
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 }catch (ExecutionException e){
 
@@ -681,7 +682,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 String processData = "";
 
                 try{
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 }catch (ExecutionException e){
 
@@ -726,7 +727,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 SocketData = "getValves";                                                                      //_____________________________________________________________Valves
                 socketController = new SocketController(Schedule.this,SocketData);
                 try{
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 }catch (ExecutionException e){
 
@@ -834,7 +835,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
 
 
                 try{
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 }catch (ExecutionException e){
 
@@ -877,7 +878,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 SocketData = "getValves";                                                                      //_____________________________________________________________Valves
                 socketController = new SocketController(Schedule.this,SocketData);
                 try{
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 }catch (ExecutionException e){
 

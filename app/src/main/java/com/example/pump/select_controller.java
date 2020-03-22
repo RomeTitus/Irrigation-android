@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -22,12 +23,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.vicmikhailau.maskededittext.MaskedEditText;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class select_controller extends AppCompatActivity implements View.OnLongClickListener{
 
-    private Button addControoler, editController, backButton, btnAddSlave, BtnDeleteController;
+    private Button addControoler, editController, backButton, btnAddSlave, BtnDeleteController, btnCheckForUpdates;
     private TextView PathLocation, PathPort, txtPath, txtPort;
     private ImageButton imageButtonArrow;
     private boolean viewServer = false;
@@ -67,6 +70,7 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
         linearLayoutSlavesPage = findViewById(R.id.LinearLayoutSlavesPage);
         imageButtonArrow = findViewById(R.id.ImageButtonArrow);
         editController = findViewById(R.id.BtnEditServer);
+        btnCheckForUpdates = findViewById(R.id.BtnUpdateController);
         backButton = findViewById(R.id.BtnBack);
         btnAddSlave = findViewById(R.id.BtnAddSlave);
         BtnDeleteController = findViewById(R.id.BtnDeleteController);
@@ -161,7 +165,7 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
                                     String processData = "";
 
                                     try {
-                                        processData = socketControllerManualInternal.execute().get();
+                                        processData = socketControllerManualInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                                     } catch (ExecutionException e) {
 
@@ -222,7 +226,7 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
                                     String processData = "";
 
                                     try {
-                                        processData = socketControllerManualExternal.execute().get();
+                                        processData = socketControllerManualExternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                                         final String finalProcessData1 = processData;
                                         runOnUI(new Runnable() { //used to speak to main thread
@@ -282,7 +286,7 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
                 String processData = "";
 
                 try {
-                    processData = socketControllerManual.execute().get();
+                    processData = socketControllerManual.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 } catch (ExecutionException e) {
 
@@ -425,7 +429,149 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
 
         });
 
+        btnCheckForUpdates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(select_controller.this);
+                TextView txtEquipmentName, header;
+                Button btnCancel, btnConfirm;
+                dialog.setContentView(R.layout.activity_confirm);
+                txtEquipmentName = dialog.findViewById(R.id.TxtEquipmentName);
+                header = dialog.findViewById(R.id.textView14);
+                btnCancel = dialog.findViewById(R.id.BtnCancelDelete);
+                btnConfirm = dialog.findViewById(R.id.BtnConfirmDelete);
+                header.setText("UPDATE");
+                txtEquipmentName.setText("Are you sure you want to Update this System?");
 
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Button dialogLoadCancel;
+                        dialog.setContentView(R.layout.loading_screen);//popup view is the layout you created
+
+                        dialogLoadCancel = dialog.findViewById(R.id.BtnCancel);
+                        dialogLoadCancel.setVisibility(View.GONE);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.setCancelable(false);
+
+                        new Thread(new Runnable() { //Running on a new thread
+                            public void run() {
+
+                                String SocketData = "";
+                                SocketData = "checkAndUpdate";
+                                SocketController socketController = new SocketController(select_controller.this,SocketData);
+                                try{
+                                    final String processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                                    runOnUI(new Runnable() { //used to speak to main thread
+                                        @Override
+                                        public void run() {
+                                            dialog.setContentView(R.layout.schedule_info);//popup view is the layout you created
+                                            LayoutInflater layoutInflaterUpdateInfo = LayoutInflater.from(select_controller.this);
+                                            LinearLayout LinearLayoutScrollInfo;
+                                            TextView txtUpdateInfo, Header, TxtStartTime, textView7, TxtPumpInfo, textView8;
+                                            Button BtnHide, BtnDelete;
+
+                                            BtnHide = dialog.findViewById(R.id.BtnEdit);
+                                            BtnDelete = dialog.findViewById(R.id.BtnDelete);
+                                            Header = dialog.findViewById(R.id.textView13);
+                                            TxtStartTime = dialog.findViewById(R.id.TxtStartTime);
+                                            textView7 = dialog.findViewById(R.id.textView7);
+                                            TxtPumpInfo = dialog.findViewById(R.id.TxtPumpInfo);
+                                            textView8 = dialog.findViewById(R.id.textView8);
+                                            LinearLayoutScrollInfo = dialog.findViewById(R.id.LinearLayoutScrollInfo);
+
+                                            BtnHide.setText("Hide");
+                                            Header.setText("UPDATE STATUS");
+                                            TxtStartTime.setText("Do not Turn off the System....");
+                                            textView8.setText("System will reboot when complete");
+
+
+                                            View view = layoutInflaterUpdateInfo.inflate(R.layout.all_valves_toggle, LinearLayoutScrollInfo, false);
+                                            MaskedEditText editTextDuration;
+                                            editTextDuration = view.findViewById(R.id.EditTextManualDuration);
+                                            txtUpdateInfo = view.findViewById(R.id.TxtZoneName);
+
+                                            if(processData.equals("checkAndUpdate")){
+                                                txtUpdateInfo.setText("Controller is not supported");
+                                            }else if(processData.equals("Already up to date!")){
+                                                txtUpdateInfo.setText(processData);
+                                                TxtStartTime.setText("You have the latest public release");
+                                                textView8.setVisibility(View.GONE);
+                                            }
+                                            else{
+                                                txtUpdateInfo.setText(processData);
+                                            }
+
+                                            editTextDuration.setVisibility(View.GONE);
+                                            LinearLayoutScrollInfo.addView(view);
+
+                                            textView7.setVisibility(View.GONE);
+                                            TxtPumpInfo.setVisibility(View.GONE);
+                                            BtnDelete.setVisibility(View.GONE);
+                                            BtnHide.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                            //dialogLoad.dismiss();
+                                            //displayScheduleInfo(processData);
+                                        }
+                                    });
+                                }catch (ExecutionException e){
+
+                                }catch (InterruptedException i){
+
+                                }
+
+
+                            }
+
+                        }).start();
+
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
+
+
+
+       /* new Thread(new Runnable() { //Running on a new thread
+            public void run() {
+
+                String SocketData = "";
+                SocketData = v.getId() +"$getScheduleInfo";
+                SocketController socketController = new SocketController(Schedule.this,SocketData);
+                try{
+                    final String processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            dialogLoad.dismiss();
+                            displayScheduleInfo(processData);
+                        }
+                    });
+                }catch (ExecutionException e){
+
+                }catch (InterruptedException i){
+
+                }
+
+
+            }
+
+        }).start();
+        */
             }
 
 
@@ -494,7 +640,7 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
                 String processData = "Data Empty";
                 final SocketController socketController = new SocketController(select_controller.this,"getConnectedSlaves");
                 try{
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                 }catch (ExecutionException e){
 

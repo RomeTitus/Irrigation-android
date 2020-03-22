@@ -21,13 +21,14 @@ import java.net.UnknownHostException;
 
 
 public class SocketController  extends AsyncTask<Void, Void, String> {
+
     String rawData;
     Socket socket;
     String response;
     PrintWriter printWriterl;
     Context context;
     SQLManager sqlManager;
-
+    long startTime = 0;
     String InternalIP;
     int Internalport = -1;
 
@@ -55,7 +56,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
     public static Handler UIHandler; //Invokes the UI Thread
 
     public SocketController(Context context, String rawData){
-
+        startTime = System.nanoTime();
         this.rawData = rawData;
         this.context = context;
         sqlManager = new SQLManager(context);
@@ -76,6 +77,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
             }
 
         }
+        path.close();
 
     }
 
@@ -99,7 +101,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
             }
             this.timeout = SocketTimeout;
         }
-
+        path.close();
     }
 
     private static void runOnUI(Runnable runnable) { //Runs code to invoke the main thread
@@ -109,7 +111,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... voids) {
 
-
+        //long startTime = System.nanoTime();
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
@@ -131,7 +133,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                         printWriterl = new PrintWriter(socket.getOutputStream());
                         printWriterl.write(rawData);
                         printWriterl.flush();//Sends the message
-                        long startTime = System.nanoTime();
+                        //long startTime = System.nanoTime();
 
                         response = URLDecoder.decode(in.readLine(), "UTF-8");
 
@@ -333,4 +335,5 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
         }
         return time;
     }
+
 }

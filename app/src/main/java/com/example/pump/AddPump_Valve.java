@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -1343,7 +1344,7 @@ String getPumpsForInfo, getZonesForInfo;
                         String processData = "";
 
                         try {
-                            processData = socketController.execute().get();
+                            processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                         } catch (ExecutionException e) {
 
                         } catch (InterruptedException i) {
@@ -1441,7 +1442,7 @@ String getPumpsForInfo, getZonesForInfo;
                                     //_____________________________________________________________Valves
                         socketController = new SocketController(AddPump_Valve.this, "getValves");
                         try {
-                            processData = socketController.execute().get();
+                            processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                         } catch (ExecutionException e) {
 
                         } catch (InterruptedException i) {
@@ -1556,7 +1557,7 @@ String getPumpsForInfo, getZonesForInfo;
                 String processData = "";
 
                 try {
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                 } catch (ExecutionException e) {
 
                 } catch (InterruptedException i) {
@@ -1667,7 +1668,7 @@ String getPumpsForInfo, getZonesForInfo;
                 //_____________________________________________________________Valves
                 socketController = new SocketController(AddPump_Valve.this, "getValves");
                 try {
-                    processData = socketController.execute().get();
+                    processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                 } catch (ExecutionException e) {
 
                 } catch (InterruptedException i) {

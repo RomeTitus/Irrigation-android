@@ -2,6 +2,7 @@ package com.example.pump;
 
 import android.app.Dialog;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -70,7 +71,7 @@ public class SlaveController extends AppCompatActivity implements View.OnLongCli
         String processData = "Data Empty";
         socketController = new SocketController(SlaveController.this,"getBTdiscover", 50000);
         try{
-            processData = socketController.execute().get();
+            processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
         }catch (ExecutionException e){
 

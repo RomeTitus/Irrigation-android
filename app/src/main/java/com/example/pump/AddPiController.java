@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -80,7 +81,7 @@ public class AddPiController extends AppCompatActivity {
                             final SocketController socketControllerInternal = new SocketController(AddPiController.this, "getMAC",InternalConnection,  Integer.parseInt(InternalPort), true);
                             //final SocketController socketController = new SocketController(AddPiController.this, "getMAC");
                             try {
-                                processData = socketControllerInternal.execute().get();
+                                processData = socketControllerInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                                 if(!processData.equals("Server Not Running")){
                                     Mac = processData;
                                     internal = true;
@@ -94,7 +95,7 @@ public class AddPiController extends AppCompatActivity {
 
                             final SocketController socketControllerExternal = new SocketController(AddPiController.this, "getMAC",ExternalConnection,  Integer.parseInt(ExternalPort), false);
                             try {
-                                processData = socketControllerExternal.execute().get();
+                                processData = socketControllerExternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                                 if(!processData.equals("Server Not Running")){
                                     Mac = processData;
                                     external = true;
@@ -134,7 +135,7 @@ public class AddPiController extends AppCompatActivity {
                             final SocketController socketControllerInternal = new SocketController(AddPiController.this, "getMAC",InternalConnection,  Integer.parseInt(InternalPort), true);
                             //final SocketController socketController = new SocketController(AddPiController.this, "getMAC");
                             try {
-                                processData = socketControllerInternal.execute().get();
+                                processData = socketControllerInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                                 if(!processData.equals("Server Not Running")){
                                     Mac = processData;
                                     internal = true;
@@ -171,7 +172,7 @@ public class AddPiController extends AppCompatActivity {
                             final SocketController socketControllerExternal = new SocketController(AddPiController.this, "getMAC",ExternalConnection,  Integer.parseInt(ExternalPort), false);
                             //final SocketController socketController = new SocketController(AddPiController.this, "getMAC");
                             try {
-                                processData = socketControllerExternal.execute().get();
+                                processData = socketControllerExternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
                                 if(!processData.equals("Server Not Running")){
                                     Mac = processData;
                                     external = true;

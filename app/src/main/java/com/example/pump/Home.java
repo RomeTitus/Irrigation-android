@@ -2,10 +2,12 @@ package com.example.pump;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,8 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.concurrent.ExecutionException;
 
@@ -68,9 +72,19 @@ public class Home extends AppCompatActivity {
                             if (!processData.equals("Server Not Running")) {
 
                                 if (mac.equals(processData)) {
-                                    String token = androidID + "," + FirebaseInstanceId.getInstance().getToken() + "$setToken";
-                                    final SocketController socketController = new SocketController(Home.this, token);
-                                    socketController.execute();
+
+                                    FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener( Home.this,  new OnSuccessListener<InstanceIdResult>() {
+                                        @Override
+                                        public void onSuccess(InstanceIdResult instanceIdResult) {
+                                            String mToken = instanceIdResult.getToken();
+                                            Log.e("Token",mToken);
+                                            String token = androidID + "," + mToken + "$setToken";
+                                            final SocketController socketController = new SocketController(Home.this, token);
+                                            socketController.execute();
+                                        }
+                                    });
+
+
 
                                     /*
 
@@ -109,7 +123,7 @@ public class Home extends AppCompatActivity {
                 }
             }).start();
 
-        }
+
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         Pager = findViewById(R.id.viewPager); //Creates Fragment
@@ -198,6 +212,7 @@ public class Home extends AppCompatActivity {
 
         ConnectionStatus();
         controllerName();
+        }
     }
 
 
@@ -210,7 +225,8 @@ public class Home extends AppCompatActivity {
                     String PingTime;
                     try {
                         SocketController socketControllerManual = new SocketController(Home.this, "ping");
-                        socketControllerManual.execute().get();
+                        socketControllerManual.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+                        //socketControllerManual.execute().get();
                         PingTime = socketControllerManual.getPingTime();
                     } catch (ExecutionException e) {
                         PingTime = "0";
@@ -315,7 +331,7 @@ public class Home extends AppCompatActivity {
 
                     });
 
-                    SystemClock.sleep(1000);
+                    //SystemClock.sleep(1000);
                 }
             }
 

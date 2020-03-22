@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 
 public class SlideAdapter extends PagerAdapter implements  View.OnClickListener, View.OnLongClickListener{
@@ -35,7 +37,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
     LayoutInflater inflater;
     private int position;
     View view;
-    Button btnAddPumpValve, btnViewSchedule, btnEarth, btnStartManual, btnStopManual, btnConnectController, btnAlarm;
+    Button btnAddPumpValve, btnViewSchedule, btnEarth, btnStartManual, btnStopManual, btnConnectController, btnAlarm, BtnGraph;
     LinearLayout linearLayoutScrollActiveZone, linearLayoutQueueZone,linearLayoutSensorStatus, linearLayoutScrollManualPump, linearLayoutScrollManualZone, linearLayoutManualPage;
     MaskedEditText editTextDuration;
     TextView textView14,textView15, textView17;
@@ -82,7 +84,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         String processData = "";
 
         try{
-            processData = socketController.execute().get();
+            processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
 
         }catch (ExecutionException e){
@@ -98,7 +100,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             return NoActive;
         }
 
-        String[] splitDatawithManual = processData.split("$");
+        String[] splitDatawithManual = processData.split(Pattern.quote("$"));
         String[] splitData = new String[0];
         String ManualData = "";
         //If both are running
@@ -158,7 +160,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         final SocketController socketController = new SocketController(context, SocketData);
         String processData = "";
         try{
-            processData = socketController.execute().get();
+            processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
             runOnUI(new Runnable() { //used to speak to main thread
                 @Override
                 public void run() {
@@ -201,7 +203,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         final SocketController socketController = new SocketController(context, SocketData);
         String processData = "";
         try{
-            processData = socketController.execute().get();
+            processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
             runOnUI(new Runnable() { //used to speak to main thread
                 @Override
                 public void run() {
@@ -387,6 +389,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             btnViewSchedule = view.findViewById(R.id.BtnViewSchedule);
             btnConnectController = view.findViewById(R.id.BtnConnectController);
             btnAlarm = view.findViewById(R.id.btnAlarm);
+            BtnGraph = view.findViewById(R.id.BtnGraph);
 
 
             btnAddPumpValve.setOnClickListener(new View.OnClickListener() {
@@ -427,6 +430,16 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                     //------------------------------------------------------------------
                     Intent security = new Intent(view.getContext(),Security_Layout.class);
                     view.getContext().startActivity(security);
+                    //------------------------------------------------------------------
+                }
+            });
+
+            BtnGraph.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //------------------------------------------------------------------
+                    Intent ChartsPage = new Intent(view.getContext(),Charts.class);
+                    view.getContext().startActivity(ChartsPage);
                     //------------------------------------------------------------------
                 }
             });
@@ -1091,7 +1104,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         String processData = "";
 
         try {
-            processData = socketControllerPumps.execute().get();
+            processData = socketControllerPumps.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
             //final SocketController finalSocketController = socketController;
             runOnUI(new Runnable() { //used to speak to main thread
                 @Override
@@ -1214,7 +1227,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         final SocketController socketControllerZone = new SocketController(context, "getValves");
         try {
-            processData = socketControllerZone.execute().get();
+            processData = socketControllerZone.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
             //final SocketController finalSocketController1 = socketController;
             runOnUI(new Runnable() { //used to speak to main thread
                 @Override
@@ -1328,7 +1341,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                 try{
                     //SocketController socketController = new SocketController(context,"ping");
                     SocketController socketController = new SocketController(context,"StopManualSchedule");
-                    final String responce = socketController.execute().get();
+                    final String responce = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                     if(!responce.equals("Server Not Running")) {
 
@@ -1535,7 +1548,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
                         //SocketController socketController = new SocketController(context,"ping");
                         SocketController socketController = new SocketController(context, finalSend);
 
-                        final String responce = socketController.execute().get();
+                        final String responce = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
                         if(!responce.equals("Server Not Running")) {
 
@@ -1616,7 +1629,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         String processData = "";
 
         try {
-            processData = socketControllerManual.execute().get();
+            processData = socketControllerManual.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
 
         } catch (ExecutionException e) {
 
@@ -1626,11 +1639,48 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         RunningselectedEquipment.clear();
         if (processData.equals("Data Empty")|| processData.equals("Server Not Running")) {
             manualSchedule = false;
+
+            runOnUI(new Runnable() { //used to speak to main thread
+                @Override
+                public void run() {
+                    switchAsyncRun.setEnabled(true);
+                }
+            });
+
+
         } else {
             manualSchedule = true;
             try{
 
-                String[] equipmentOn = processData.split("#");
+                String[] processDataWithManualStatus = processData.split(Pattern.quote("$"));
+
+
+                runOnUI(new Runnable() { //used to speak to main thread
+                    @Override
+                    public void run() {
+                        switchAsyncRun.setEnabled(false);
+                    }
+                });
+
+                if(processDataWithManualStatus[0].equals("0")){
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            switchAsyncRun.setEnabled(false);
+                        }
+                    });
+
+                }else{
+                    runOnUI(new Runnable() { //used to speak to main thread
+                        @Override
+                        public void run() {
+                            switchAsyncRun.setEnabled(true);
+                        }
+                    });
+
+                }
+
+                String[] equipmentOn = processDataWithManualStatus[1].split("#");
                 for (int i = 0; i < equipmentOn.length; i++) {
                     String[] data = equipmentOn[i].split(",");
                     RunningselectedEquipment.add(Integer.parseInt(data[0]));
@@ -1981,7 +2031,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
             //run = true;
             OLDmanualSchedule = manualSchedule;
             RunningselectedEquipment.clear();
-            //SystemClock.sleep(8000);
+            SystemClock.sleep(8000);
 
         }
         //}

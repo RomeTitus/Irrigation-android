@@ -47,14 +47,32 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             Map<String, String> remoteData  = remoteMessage.getData();
-            if(remoteData.get("Ngrok") !=null && remoteData.get("Bluetooth") !=null){
-                updateNgrokNotifications(remoteData.get("Ngrok"), remoteData.get("Bluetooth"));
-            }else if(remoteData.get("Alarm") !=null){
-                AlarmNotify(remoteData.get("Alarm"));
-                //updateNgrokNotifications(remoteData.get("Ngrok"));
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            if(remoteData.get("Bluetooth") !=null){
+                SQLManager sqlManager = new SQLManager(context);
+                String name = sqlManager.getControllerNameByMac(remoteData.get("Bluetooth"));
+                if(!name.equals("Unknown Controller")){
+                    String id = sqlManager.getControllerIDByMac(remoteData.get("Bluetooth"));
+                    if(remoteData.get("Ngrok") !=null){
+                        updateNgrokNotifications(remoteData.get("Ngrok"), name, remoteData.get("Bluetooth"), id);
+                    }else if(remoteData.get("Alarm") !=null){
+                        AlarmNotify(remoteData.get("Alarm"), name, remoteData.get("Bluetooth"), id);
+
+                    }else{
+
+                        displayMessage(name, id, remoteData.get("Message"), remoteData.get("Header"));
+                    }
+
+
+
+                }
             }
+
+
+
+
+
 
 
 
@@ -81,19 +99,31 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         // message, here is where that should be initiated. See sendNotification method below.
     }
 
-    public void updateNgrokNotifications(String externalConnection, String Mac){
+    public void updateNgrokNotifications(String externalConnection,String name,String Mac, String id){
+
+
+        if(!externalConnection.equals("") && externalConnection != null){
+            String port = externalConnection.substring(24);
+            port = port.replace("\n", "");
+            SQLManager sqlManager = new SQLManager(context);
+            sqlManager.updateExternalPathWithMac("0.tcp.eu.ngrok.io",port, Mac);
+            displayMessage(name,id, "We updated the connection: " + externalConnection, "Ngrok updated!");
+        }
+
+        /*
+
+
     notificationManager = NotificationManagerCompat.from(context);
-    SQLManager sqlManager = new SQLManager(context);
-        String name = sqlManager.getControllerNameByMac(Mac);
+
         Intent UpdateConnectionAndOpen = new Intent(this, NotificationActions.class);
         UpdateConnectionAndOpen.putExtra("UpdateNgrokAndOpen", "1");
-        UpdateConnectionAndOpen.putExtra("notificationId", "1");
+        UpdateConnectionAndOpen.putExtra("notificationId", id);
         UpdateConnectionAndOpen.putExtra("Ngrok", externalConnection);
         UpdateConnectionAndOpen.putExtra("Bluetooth", Mac);
         PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, UpdateConnectionAndOpen, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent broadcastIntent = new Intent(this, NotificationActions.class);
-        broadcastIntent.putExtra("notificationId", "1");
+        broadcastIntent.putExtra("notificationId", id);
         broadcastIntent.putExtra("Ngrok", externalConnection);
         broadcastIntent.putExtra("Bluetooth", Mac);
         PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -110,11 +140,12 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                 .setOnlyAlertOnce(true)
                 .addAction(R.drawable.ic_cloud, "Update Connection", actionIntent)
                 .build();
+            notificationManager.notify(Integer.parseInt(id), notification);
 
-            notificationManager.notify(1, notification);
+            */
     }
 
-    public void AlarmNotify(String externalConnection){
+    public void AlarmNotify(String externalConnection, String name, String Mac, String ID){
         JSONObject alarmDetail = null;
         String NotificationMessage = "";
         long[] pattern = {500,500,500,500,500,500,500,500,500};
@@ -145,7 +176,7 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         notificationManager = NotificationManagerCompat.from(context);
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notifications_active_24dp)
-                .setContentTitle("Alarm")
+                .setContentTitle(name +": Alarm")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setColor(Color.BLUE)
@@ -163,7 +194,26 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
         Ringtone r = RingtoneManager.getRingtone(context, alarmSound);
         r.play();
         notification.sound = (RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        notificationManager.notify(2, notification);
+        notificationManager.notify((Integer.parseInt(ID)*100), notification);
     }
+
+    public void displayMessage(String Name, String id, String body, String Title){
+        notificationManager = NotificationManagerCompat.from(context);
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_notifications_active_24dp)
+                .setContentTitle(Name +": " + Title)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setColor(Color.BLUE)
+                //.setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(body))
+                .build();
+
+        notificationManager.notify((Integer.parseInt(id)*200), notification);
+    }
+
 
 }

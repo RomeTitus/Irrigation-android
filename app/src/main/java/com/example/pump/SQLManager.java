@@ -265,6 +265,20 @@ public class SQLManager extends SQLiteOpenHelper {
         return data;
     }
 
+    public String getControllerIDByMac(String mac){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String sql = "Select id from pumpConnection pumCon where Mac = '" +mac+ "';";
+        Cursor data = sqLiteDatabase.rawQuery(sql, null);
+        if (data.getCount() > 0) {
+            data.moveToNext();
+            String Name = data.getString(0);
+            return Name;
+        }
+        else{
+            return "Unknown Controller";
+        }
+    }
+
     public String getControllerNameByMac(String mac){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         String sql = "Select Name from pumpConnection pumCon where Mac = '" +mac+ "';";
