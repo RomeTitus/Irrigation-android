@@ -565,7 +565,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 });
 
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else {
                     differentSchedule = processData.split("#");
@@ -693,7 +693,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 LayoutInflater layoutInflaterPump = LayoutInflater.from(Schedule.this);//Pump
                 LayoutInflater layoutInflaterValve = LayoutInflater.from(Schedule.this);//Valve
 
-                if(processData.equals("Data Empty")|| processData.equals("Server Not Running")) {
+                if(processData.equals("No Data")|| processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     differentButtons = processData.split("#");
@@ -734,7 +734,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 }catch (InterruptedException i){
 
                 }
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     differentButtons = processData.split("#");
@@ -847,7 +847,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 LayoutInflater layoutInflaterValve = LayoutInflater.from(Schedule.this);//Valve
 
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     differentButtons = processData.split("#");
@@ -885,7 +885,7 @@ public class Schedule extends AppCompatActivity implements View.OnClickListener,
                 }catch (InterruptedException i){
 
                 }
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     differentButtons = processData.split("#");

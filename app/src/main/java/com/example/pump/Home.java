@@ -65,7 +65,7 @@ public class Home extends AppCompatActivity {
                         String mac = ControllerMac.getString(0);
 
 
-                        String processData = "Data Empty";
+                        String processData = "No Data";
                         final SocketController socketControllerExternal = new SocketController(Home.this, "getMAC");
                         try {
                             processData = socketControllerExternal.execute().get();
@@ -285,7 +285,7 @@ public class Home extends AppCompatActivity {
                     SQLManager sqlManagerName = new SQLManager(Home.this);
                     SQLManager sqlManagerMac = new SQLManager(Home.this);
                     final Cursor CursorName = sqlManagerName.getControllerName();
-                    String processData = "Data Empty";
+                    String processData = "No Data";
                     String mac = "";
                     Cursor ControllerMac = sqlManagerMac.getSelectedMac();
 

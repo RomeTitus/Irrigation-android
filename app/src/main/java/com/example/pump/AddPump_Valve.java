@@ -305,7 +305,7 @@ String getPumpsForInfo, getZonesForInfo;
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
 
-                String processData = "Data Empty";
+                String processData = "No Data";
                 final SocketController socketController = new SocketController(AddPump_Valve.this,"getConnectedSlaves");
                 try{
                     processData = socketController.execute().get();
@@ -414,7 +414,7 @@ String getPumpsForInfo, getZonesForInfo;
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
 
-                String processData = "Data Empty";
+                String processData = "No Data";
                 final SocketController socketController = new SocketController(AddPump_Valve.this,"getConnectedSlaves");
                 try{
                     processData = socketController.execute().get();
@@ -607,7 +607,7 @@ String getPumpsForInfo, getZonesForInfo;
 
 
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     final String finalProcessData = processData;
@@ -686,7 +686,7 @@ String getPumpsForInfo, getZonesForInfo;
                 });
 
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     final String finalProcessData = processData;
@@ -767,7 +767,7 @@ String getPumpsForInfo, getZonesForInfo;
                     }
                 });
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else{
                     differentEquipment = processData.split("#");
@@ -1354,7 +1354,7 @@ String getPumpsForInfo, getZonesForInfo;
                         LayoutInflater layoutInflaterScrollManualZone = LayoutInflater.from(AddPump_Valve.this);
 
 
-                        if (!processData.equals("Data Empty") && !processData.equals("Server Not Running")) {
+                        if (!processData.equals("No Data") && !processData.equals("Server Not Running")) {
                             //No Data
                             differentButtons = processData.split("#");
 
@@ -1448,7 +1448,7 @@ String getPumpsForInfo, getZonesForInfo;
                         } catch (InterruptedException i) {
 
                         }
-                        if (processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                        if (processData.equals("No Data") || processData.equals("Server Not Running")) {
                             //No Data
                         } else {
                             differentButtons = processData.split("#");
@@ -1567,7 +1567,7 @@ String getPumpsForInfo, getZonesForInfo;
                 LayoutInflater layoutInflaterScrollManualZone = LayoutInflater.from(AddPump_Valve.this);
 
 
-                if (!processData.equals("Data Empty") && !processData.equals("Server Not Running")) {
+                if (!processData.equals("No Data") && !processData.equals("Server Not Running")) {
                     //No Data
                     differentButtons = processData.split("#");
 
@@ -1674,7 +1674,7 @@ String getPumpsForInfo, getZonesForInfo;
                 } catch (InterruptedException i) {
 
                 }
-                if (processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if (processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 } else {
                     differentButtons = processData.split("#");

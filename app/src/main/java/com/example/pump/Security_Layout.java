@@ -202,7 +202,7 @@ public class Security_Layout extends AppCompatActivity implements View.OnClickLi
 
                 LayoutInflater layoutInflaterSchedule = LayoutInflater.from(Security_Layout.this);//Pump
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else {
                     differentAlarmSensor = processData.split("#");
@@ -273,7 +273,7 @@ public class Security_Layout extends AppCompatActivity implements View.OnClickLi
 
                 LayoutInflater layoutInflaterSchedule = LayoutInflater.from(Security_Layout.this);//Pump
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else {
                     differentAlarmSensor = processData.split("#");
@@ -361,7 +361,7 @@ public class Security_Layout extends AppCompatActivity implements View.OnClickLi
                 });
 
 
-                if(processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+                if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                     //No Data
                 }else {
                     differentSchedule = processData.split("#");

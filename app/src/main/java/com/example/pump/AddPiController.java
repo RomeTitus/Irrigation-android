@@ -77,7 +77,7 @@ public class AddPiController extends AppCompatActivity {
                             Boolean internal = false;
                             Boolean external = false;
                             String Mac = "";
-                            String processData = "Data Empty";
+                            String processData = "No Data";
                             final SocketController socketControllerInternal = new SocketController(AddPiController.this, "getMAC",InternalConnection,  Integer.parseInt(InternalPort), true);
                             //final SocketController socketController = new SocketController(AddPiController.this, "getMAC");
                             try {
@@ -131,7 +131,7 @@ public class AddPiController extends AppCompatActivity {
                             Boolean internal = false;
 
                             String Mac = "";
-                            String processData = "Data Empty";
+                            String processData = "No Data";
                             final SocketController socketControllerInternal = new SocketController(AddPiController.this, "getMAC",InternalConnection,  Integer.parseInt(InternalPort), true);
                             //final SocketController socketController = new SocketController(AddPiController.this, "getMAC");
                             try {
@@ -168,7 +168,7 @@ public class AddPiController extends AppCompatActivity {
                             Boolean external = false;
 
                             String Mac = "";
-                            String processData = "Data Empty";
+                            String processData = "No Data";
                             final SocketController socketControllerExternal = new SocketController(AddPiController.this, "getMAC",ExternalConnection,  Integer.parseInt(ExternalPort), false);
                             //final SocketController socketController = new SocketController(AddPiController.this, "getMAC");
                             try {

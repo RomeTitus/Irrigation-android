@@ -143,7 +143,7 @@ private void getLastWeekData(){
     new Thread(new Runnable() { //Running on a new thread
         public void run() {
 
-            String processData = "Data Empty";
+            String processData = "No Data";
             final SocketController socketControllerInternal = new SocketController(Charts.this, "getWeekData");
             try {
                 processData = socketControllerInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
@@ -171,7 +171,7 @@ private void getLastWeekData(){
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
 
-                String processData = "Data Empty";
+                String processData = "No Data";
                 final SocketController socketControllerInternal = new SocketController(Charts.this, "getYesterdayData");
                 try {
                     processData = socketControllerInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
@@ -199,7 +199,7 @@ private void getLastWeekData(){
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
 
-                String processData = "Data Empty";
+                String processData = "No Data";
                 final SocketController socketControllerInternal = new SocketController(Charts.this, "getLast30Days");
                 try {
                     processData = socketControllerInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
@@ -228,7 +228,7 @@ private void getLastWeekData(){
         new Thread(new Runnable() { //Running on a new thread
             public void run() {
 
-                String processData = "Data Empty";
+                String processData = "No Data";
                 final SocketController socketControllerInternal = new SocketController(Charts.this, "getReadingTotal");
                 try {
                     processData = socketControllerInternal.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();

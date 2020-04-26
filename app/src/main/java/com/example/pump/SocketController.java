@@ -145,7 +145,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                             timeElapsedMilliseconds = 1;
                         }
 
-                        if (response == null) {
+                        if (response == null || response.equals("Data Empty")) {
                             noConnection = true;
                             retry = retry + 1;
                             //return "Server Not Running";
@@ -206,7 +206,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                     long timeElapsed = endTime - startTime;
                     timeElapsedMilliseconds = timeElapsed / 1000000;
 
-                    if (response == null) {
+                    if (response == null || response.equals("Data Empty")) {
                         noConnection = true;
                         return "Server Not Running";
                     } else {
@@ -272,7 +272,7 @@ public class SocketController  extends AsyncTask<Void, Void, String> {
                 long timeElapsed = endTime - startTime;
                 timeElapsedMilliseconds = timeElapsed / 1000000;
 
-                if (response == null) {
+                if (response == null || response.equals("Data Empty")) {
                     noConnection = true;
                     return "Server Not Running";
                 } else {

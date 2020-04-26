@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LayoutInflater layoutInflaterPump = LayoutInflater.from(this);//Pump
         LayoutInflater layoutInflaterValve = LayoutInflater.from(this);//Valve
 
-        if(processData.equals("Data Empty")) {
+        if(processData.equals("No Data")) {
             //No Data
         }else{
         differentButtons = processData.split("#");
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }catch (InterruptedException i){
 
         }
-        if(processData.equals("Data Empty")) {
+        if(processData.equals("No Data")) {
         //No Data
         }else{
         differentButtons = processData.split("#");

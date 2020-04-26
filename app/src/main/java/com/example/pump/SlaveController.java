@@ -89,7 +89,7 @@ public class SlaveController extends AppCompatActivity implements View.OnLongCli
                 });
                 BTName.clear();
                 BTAdress.clear();
-        if(processData.equals("") || processData.equals("Server Not Running")) {
+        if(processData.equals("No Data") || processData.equals("Server Not Running")) {
                 //No Data
 
                 TextView BTNames;

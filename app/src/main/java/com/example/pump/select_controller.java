@@ -637,7 +637,7 @@ public class select_controller extends AppCompatActivity implements View.OnLongC
 
 
 
-                String processData = "Data Empty";
+                String processData = "No Data";
                 final SocketController socketController = new SocketController(select_controller.this,"getConnectedSlaves");
                 try{
                     processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();

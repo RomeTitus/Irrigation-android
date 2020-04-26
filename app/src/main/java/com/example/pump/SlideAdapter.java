@@ -204,12 +204,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         String processData = "";
         try{
             processData = socketController.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
-            runOnUI(new Runnable() { //used to speak to main thread
-                @Override
-                public void run() {
-                    listener.onObjectReady(socketController.getPingTime());
-                }
-            });
+
         }catch (ExecutionException e){
 
         }catch (InterruptedException i){
@@ -870,7 +865,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                         txtSensorName.setText(ActiveSensorDetails[i][1]);
 
-                        if (ActiveSensorDetails[i][3].equals("0")) {
+                        if (ActiveSensorDetails[i][3].equals("0") || ActiveSensorDetails[i][3].equals("False")) {
                             imageSesnorStatus.setBackgroundResource(R.drawable.pressure_low);
                             txtPressureStatus.setText("Pressure: LOW");
                         } else {
@@ -917,7 +912,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                         txtSensorName.setText(ActiveSensorDetails[i][2]);
 
-                        if (ActiveSensorDetails[i][3].equals("0")) {
+                        if (ActiveSensorDetails[i][3].equals("0") || ActiveSensorDetails[i][3].equals("False")) {
                             imageSesnorStatus.setBackgroundResource(R.drawable.pir_low_img);
                             txtPressureStatus.setText("Nothing detected");
                         } else {
@@ -942,7 +937,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                         txtSensorName.setText(ActiveSensorDetails[i][2]);
 
-                        if (ActiveSensorDetails[i][3].equals("1")) {
+                        if (ActiveSensorDetails[i][3].equals("1") || ActiveSensorDetails[i][3].equals("True")) {
                             imageSesnorStatus.setBackgroundResource(R.drawable.vibration_low_img);
                             txtPressureStatus.setText("No Vibrations");
                         } else {
@@ -968,7 +963,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
                         txtSensorName.setText(ActiveSensorDetails[i][1]);
 
-                        if (ActiveSensorDetails[i][3].equals("0")) {
+                        if (ActiveSensorDetails[i][3].equals("0") || ActiveSensorDetails[i][3].equals("False")) {
                             imageSesnorStatus.setBackgroundResource(R.drawable.mic_low_img);
                             txtPressureStatus.setText("No Sound");
                         } else {
@@ -1120,7 +1115,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
 
 
-        if (!processData.equals("Data Empty") && !processData.equals("Server Not Running")) {
+        if (!processData.equals("No Data") && !processData.equals("Server Not Running")) {
             //No Data
             differentButtons = processData.split("#");
 
@@ -1240,7 +1235,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
         } catch (InterruptedException i) {
 
         }
-        if (processData.equals("Data Empty") || processData.equals("Server Not Running")) {
+        if (processData.equals("No Data") || processData.equals("Server Not Running")) {
             //No Data
         } else {
             differentButtons = processData.split("#");
@@ -1637,7 +1632,7 @@ public class SlideAdapter extends PagerAdapter implements  View.OnClickListener,
 
         }
         RunningselectedEquipment.clear();
-        if (processData.equals("Data Empty")|| processData.equals("Server Not Running")) {
+        if (processData.equals("No Data")|| processData.equals("Server Not Running")) {
             manualSchedule = false;
 
             runOnUI(new Runnable() { //used to speak to main thread
